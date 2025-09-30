@@ -1,0 +1,69 @@
+---
+import Container from "~/components/ui/Container.astro";
+import SvgIcon from "~/components/ui/SvgIcon.astro";
+import Typography from "~/components/ui/typography/Typography.astro";
+import type { AccordionCenteredStoryblok } from "~/types/storyblok";
+import type { BlokProps } from "~/types/storyblok.custom";
+import { makeEditable } from "~/utils/storyblokRepository/helpers";
+
+type Props = BlokProps<AccordionCenteredStoryblok>;
+const { blok } = Astro.props;
+const { title, faqRows } = blok;
+---
+
+<div class="bg-gray-50" data-accordion="accordion-centered">
+  <Container class="py-12 sm:py-16  ">
+    <div class="mx-auto max-w-3xl divide-y-2 divide-gray-200">
+      <Typography as="h2" variant="h2" class="text-center text-primary-900 ">{title}</Typography>
+      <dl class="mt-6 space-y-6 divide-y divide-gray-200">
+        {faqRows?.map((row) => (
+          <div class="pt-6" {...makeEditable(row)}>
+            <dt class="text-lg">
+              <button class="flex w-full items-start justify-between text-left text-gray-400" type="button" aria-expanded="false">
+                <span class="font-medium text-primary-900">{row.question}</span>
+                <span class="ml-6 flex h-7 items-center">
+                  <SvgIcon name="ChevronDown" class="h-6 w-6" />
+                </span>
+              </button>
+            </dt>
+            <dd class="mt-2 pr-12 hidden">
+              <Typography as="p" variant="body" class="text-primary-700">{row.answer}</Typography>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </Container>
+</div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+  const root = document.querySelector('[data-accordion="accordion-centered"]');
+  if (root) {
+    const items = Array.from(root.querySelectorAll('dt')); 
+    items.forEach((dt) => {
+      const buttonEl = dt.querySelector('button') as HTMLButtonElement | null;
+      const ddEl = dt.nextElementSibling as HTMLElement | null;
+      const iconEl = (buttonEl?.querySelector('svg') as SVGElement | null) || null;
+      if (!buttonEl || !ddEl) return;
+
+      function setOpen(open: boolean, btn: HTMLButtonElement, dd: HTMLElement, icon: SVGElement | null) {
+        btn.setAttribute('aria-expanded', String(open));
+        dd.classList.toggle('hidden', !open);
+        if (icon) {
+          icon.classList.toggle('-rotate-90', !open);
+          icon.classList.toggle('rotate-0', open);
+        }
+      }
+
+      setOpen(false, buttonEl, ddEl, iconEl);
+
+      buttonEl.addEventListener('click', () => {
+        const isOpen = buttonEl.getAttribute('aria-expanded') === 'true';
+        setOpen(!isOpen, buttonEl, ddEl, iconEl);
+      });
+    });
+  }
+});
+</script>
+

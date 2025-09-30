@@ -1,0 +1,140 @@
+---
+import Container from '~/components/ui/Container.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import type { StoryblokComponent } from '~/types/storyblok';
+
+export interface Props {
+  blok: StoryblokComponent;
+}
+
+const { blok } = Astro.props;
+
+// Extract component info for debugging
+const componentName = blok.component || 'Unknown';
+const componentId = blok._uid || 'no-id';
+const hasContent = Object.keys(blok).length > 2; // More than just component and _uid
+
+// Development mode detection
+const isDev = import.meta.env.DEV;
+---
+
+  <Container class="py-8 md:py-12">
+    <div class="relative p-6 rounded-lg border backdrop-blur-sm md:p-8 border-grey-400/20 bg-grey-800/50">
+      {/* Grid decoration */}
+      <div class="absolute inset-0 opacity-20">
+        <div
+          class="w-full h-full"
+          style="
+          background-image: 
+            linear-gradient(rgba(109, 218, 132, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(109, 218, 132, 0.1) 1px, transparent 1px);
+          background-size: 32px 32px;
+        "
+        >
+        </div>
+      </div>
+
+      {/* Corner cross decoration */}
+      <div class="absolute top-4 right-4 text-brand-green/30">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="transform rotate-45">
+          <path d="M8 0v16M0 8h16" stroke="currentColor" stroke-width="1"></path>
+        </svg>
+      </div>
+
+      <div class="flex relative z-10 flex-col gap-4">
+        {/* Header */}
+        <div class="flex gap-3 items-center">
+          <div class="flex-shrink-0">
+            <div
+              class="flex justify-center items-center w-8 h-8 bg-gradient-to-br rounded-full border from-brand-green/20 to-brand-violet/20 border-brand-green/30"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="text-brand-green">
+                <path
+                  d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  fill="none"></path>
+                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" fill="none"></path>
+              </svg>
+            </div>
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <Typography variant="eyebrow" class="text-brand-green/80">Component Missing</Typography>
+            <Typography variant="smallHeading" as="h3" class="mt-1 text-grey-100">
+              Component "{componentName}" Not Found
+            </Typography>
+          </div>
+        </div>
+
+        {/* Main message */}
+        <div class="pl-11">
+          <Typography class="leading-relaxed text-grey-300">
+            The component <code class="px-1.5 py-0.5 font-mono text-sm rounded bg-grey-900/50 text-brand-green"
+              >{componentName}</code
+            > is not registered in your Storyblok configuration.
+          </Typography>
+
+          {
+            isDev && (
+              <div class="p-4 mt-4 rounded-md border bg-grey-900/30 border-grey-600/20">
+                <Typography variant="smallText" class="mb-2 font-mono text-grey-400">
+                  Development Info:
+                </Typography>
+                <div class="space-y-1 font-mono text-xs">
+                  <div class="flex gap-2 items-center">
+                    <span class="text-grey-500">Component:</span>
+                    <span class="text-brand-green">{componentName}</span>
+                  </div>
+                  <div class="flex gap-2 items-center">
+                    <span class="text-grey-500">UID:</span>
+                    <span class="text-grey-300">{componentId}</span>
+                  </div>
+                  <div class="flex gap-2 items-center">
+                    <span class="text-grey-500">Has Content:</span>
+                    <span class={hasContent ? 'text-brand-green' : 'text-grey-500'}>{hasContent ? 'Yes' : 'No'}</span>
+                  </div>
+                </div>
+
+                {hasContent && (
+                  <details class="mt-3">
+                    <summary class="text-xs cursor-pointer select-none text-brand-green/80 hover:text-brand-green">
+                      Show Component Data
+                    </summary>
+                    <pre class="overflow-x-auto p-2 mt-2 max-h-32 text-xs rounded border text-grey-400 bg-black/20 border-grey-600/10">
+                      {JSON.stringify(blok, null, 2)}
+                    </pre>
+                  </details>
+                )}
+              </div>
+            )
+          }
+        </div>
+
+        {/* Action hint */}
+        <div class="pl-11">
+          <div class="flex gap-2 items-start p-3 rounded border bg-brand-violet/5 border-brand-violet/20">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="flex-shrink-0 mt-0.5 text-brand-violet">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"></circle>
+              <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2"></path>
+            </svg>
+            <div>
+              <Typography variant="smallText" class="font-medium text-grey-300">Fix this by:</Typography>
+              <Typography variant="smallText" class="mt-1 leading-relaxed text-grey-400">
+                Add <code class="text-brand-violet">{componentName}</code> to your components mapping in <code
+                  class="text-brand-violet">astro.config.ts</code
+                >
+              </Typography>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Subtle glow effect */}
+      <div
+        class="absolute inset-0 rounded-lg opacity-0 transition-opacity duration-300 pointer-events-none hover:opacity-100"
+      >
+        <div class="absolute inset-0 rounded-lg shadow-[0_0_20px_-8px] shadow-brand-green/20"></div>
+      </div>
+    </div>
+  </Container>

@@ -1,0 +1,19 @@
+---
+import RichTextRenderer from '~/components/storyblok/utils/RichTextRenderer.astro';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
+import { clsxm } from '~/utils/helpers';
+import type { RichTextContentStoryblok } from '~/types/storyblok';
+import type { HTMLAttributes } from 'astro/types';
+import type { BlokProps } from '~/types/storyblok.custom';
+
+export type Props = BlokProps<RichTextContentStoryblok> &
+  HTMLAttributes<'section'> & {
+    className?: string;
+  };
+
+const { blok, className, ...rest } = Astro.props;
+---
+
+<section class={clsxm('rich-text-content', className)} {...makeEditable(blok)} {...rest}>
+  {blok.text && <RichTextRenderer content={blok.text} />}
+</section>

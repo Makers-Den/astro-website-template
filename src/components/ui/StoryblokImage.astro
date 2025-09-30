@@ -1,0 +1,143 @@
+---
+import { getStoryblokImageUrl, getResponsiveStoryblokImageSrcSet } from '~/utils/storyblokRepository/helpers';
+import { calculateSmartBreakpoints } from '~/utils/imagesOptimization';
+export interface Props {
+  src?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  quality?: number;
+  format?: 'webp' | 'avif' | 'jpg' | 'png';
+  loading?: 'lazy' | 'eager';
+  class?: string;
+  sizes?: string;
+  priority?: boolean;
+  breakpoints?: number[];
+  style?: string;
+  fetchpriority?: 'high' | 'low' | 'auto';
+  decoding?: 'sync' | 'async' | 'auto';
+  fill?: boolean;
+  fallbackImage?: { filename?: string };
+}
+
+const {
+  src: srcProp,
+  alt,
+  width = 800,
+  height,
+  quality = 80,
+  format = 'webp',
+  loading = 'lazy',
+  class: className = '',
+  sizes,
+  priority = false,
+  breakpoints,
+  style = '',
+  fetchpriority,
+  decoding = 'async',
+  fill = false,
+  fallbackImage,
+  ...rest
+} = Astro.props;
+
+const src = srcProp || fallbackImage?.filename;
+
+// Early return if no valid image source
+if (!src) {
+  return null;
+}
+
+// Check if the image is an SVG
+const isSvg = src.toLowerCase().includes('.svg');
+
+// Initialize variables for raster images
+let optimizedSrc = src;
+let srcSet: string | undefined;
+let defaultSizes = '';
+let aspectRatio: number | undefined;
+let paddingBottom: string | undefined;
+let finalDecoding = decoding;
+
+// Only process optimization for non-SVG images
+if (!isSvg) {
+  // Generate optimized image URL
+  optimizedSrc = getStoryblokImageUrl(src, {
+    width,
+    height,
+    quality,
+    format,
+  });
+
+  // Default sizes if not provided
+  defaultSizes =
+    sizes ||
+    '(max-width: 412px) 95vw, (max-width: 480px) 90vw, (max-width: 768px) 80vw, (max-width: 1200px) 50vw, 33vw';
+
+  // When sizes is provided, generate responsive srcSet with width descriptors
+  const finalBreakpoints = breakpoints || calculateSmartBreakpoints(width, defaultSizes);
+  srcSet = getResponsiveStoryblokImageSrcSet(src, finalBreakpoints, {
+    quality,
+    format,
+  });
+
+  // Calculate aspect ratio for responsive sizing (only when not fill)
+  if (!fill) {
+    aspectRatio = height && width ? (height / width) * 100 : undefined;
+    paddingBottom = aspectRatio ? `${aspectRatio}%` : undefined;
+  }
+
+  // Set decoding to sync for priority images to improve LCP
+  finalDecoding = priority ? 'sync' : decoding;
+}
+
+// Prepare image styles for fill behavior
+const fillStyles = fill
+  ? 'position: absolute; height: 100%; width: 100%; left: 0; top: 0; right: 0; bottom: 0; color: transparent;'
+  : '';
+
+const combinedStyle = `${fillStyles}${style}`;
+---
+
+{
+  isSvg ? (
+    <img
+      src={src}
+      alt={alt ?? ''}
+      width={fill ? undefined : width}
+      height={fill ? undefined : height}
+      loading={priority ? 'eager' : loading}
+      fetchpriority={fetchpriority}
+      decoding={decoding}
+      class={className}
+      style={combinedStyle}
+      {...rest}
+    />
+  ) : fill ? (
+    <img
+      src={optimizedSrc}
+      srcset={srcSet}
+      sizes={defaultSizes}
+      alt={alt}
+      loading={priority ? 'eager' : loading}
+      fetchpriority={fetchpriority}
+      decoding={finalDecoding}
+      class={`h-auto max-w-full ${className}`}
+      style={combinedStyle}
+      {...rest}
+    />
+  ) : (
+    <img
+      src={optimizedSrc}
+      srcset={srcSet}
+      sizes={defaultSizes}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={priority ? 'eager' : loading}
+      fetchpriority={fetchpriority}
+      decoding={finalDecoding}
+      class={`${className} ${paddingBottom ? 'inset-0 object-cover' : ''}`}
+      {...rest}
+    />
+  )
+}

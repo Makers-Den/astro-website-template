@@ -1,0 +1,117 @@
+---
+import type { StoryblokRichtext } from "~/types/storyblok";
+import RichTextRenderer from "../storyblok/utils/RichTextRenderer.astro";
+
+export interface Props {
+  text?: StoryblokRichtext;
+  isSelected?: boolean;
+  name?: string;
+  id?: string;
+  class?: string;
+  onEventName?: string;
+  setEventName?: string;
+}
+
+const {
+  text,
+  isSelected = false,
+  name = "switch",
+  id = "switch",
+  class: className,
+  onEventName = 'switchChange',
+  setEventName = 'switchSet',
+} = Astro.props as Props;
+
+---
+
+<div class={['sm:col-span-2', className].filter(Boolean).join(' ')} data-switch-root data-switch-id={id} data-on-event={onEventName} data-set-event={setEventName}>
+  <div class="flex items-center">
+    <label class="flex items-center cursor-pointer">
+      <input
+        id={id}
+        name={name}
+        type="checkbox"
+        class="peer sr-only"
+        checked={isSelected}
+      />
+      <div
+        class="relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 peer-checked:bg-primary-600 after:pointer-events-none after:absolute after:top-1/2 after:-translate-y-1/2 after:left-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:ring-0 after:transition after:duration-200 after:ease-in-out peer-checked:after:translate-x-5"
+        role="switch"
+        aria-checked={isSelected ? 'true' : 'false'}
+        data-switch-track
+      >
+        <span class="sr-only">Agree to policies</span>
+      </div>
+      {text && <RichTextRenderer content={text} tag="span" className="ml-3 text-base text-gray-500 mb-0 leading-6" />}
+    </label>
+  </div>
+  
+</div>
+
+<script>
+  const init = () => {
+    const root = document.querySelector('[data-switch-root]') as HTMLElement | null;
+    if (!root) return () => {};
+    const input = root.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
+    const track = root.querySelector('[data-switch-track]') as HTMLElement | null;
+    const onEventName = root.getAttribute('data-on-event') || 'switchChange';
+    const setEventName = root.getAttribute('data-set-event') || 'switchSet';
+
+    const dispatchChange = () => {
+      if (!input) return;
+      const event = new CustomEvent(onEventName, {
+        bubbles: true,
+        detail: {
+          checked: input.checked,
+          name: input.name,
+          id: input.id,
+        },
+      });
+      root.dispatchEvent(event);
+    };
+
+    const onInputChange = () => {
+      if (track && input) {
+        track.setAttribute('aria-checked', input.checked ? 'true' : 'false');
+      }
+      dispatchChange();
+    };
+
+    const onExternalSet = (e: Event) => {
+      const custom = e as CustomEvent<{ checked?: boolean }>;
+      if (!input || !custom?.detail) return;
+      if (typeof custom.detail.checked === 'boolean') {
+        input.checked = custom.detail.checked;
+        if (track) track.setAttribute('aria-checked', input.checked ? 'true' : 'false');
+        dispatchChange();
+      }
+    };
+
+    if (input) {
+      // Sync initial ARIA state
+      if (track) track.setAttribute('aria-checked', input.checked ? 'true' : 'false');
+      input.addEventListener('change', onInputChange);
+    }
+    root.addEventListener(setEventName, onExternalSet as EventListener);
+
+    return () => {
+      if (input) {
+        input.removeEventListener('change', onInputChange);
+      }
+      root.removeEventListener(setEventName, onExternalSet as EventListener);
+    };
+  };
+
+  let cleanup: (() => void) | null = null;
+
+  document.addEventListener('astro:page-load', () => {
+    if (cleanup) cleanup();
+    cleanup = init();
+  });
+
+  document.addEventListener('astro:before-swap', () => {
+    if (cleanup) cleanup();
+    cleanup = null;
+  });
+</script>
+

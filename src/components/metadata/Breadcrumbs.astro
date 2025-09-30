@@ -1,0 +1,50 @@
+---
+import JsonLdMetadata from './JsonLdMetadata.astro';
+
+export interface Props {
+  items: Array<{
+    title: string;
+    path?: string;
+    url?: string;
+  }>;
+}
+
+const { items } = Astro.props;
+
+// Only render if we have at least 2 items
+const shouldRender = items.length >= 2;
+
+if (!shouldRender) {
+  return null;
+}
+
+// Generate URLs for items that don't have them
+const itemsWithUrls = items.map((item) => {
+  if (item.url) {
+    return item;
+  }
+
+  if (item.path) {
+    const baseUrl = Astro.site?.toString() || 'https://makersden.io';
+    return {
+      ...item,
+      url: `${baseUrl}${item.path.startsWith('/') ? item.path : `/${item.path}`}`,
+    };
+  }
+
+  return item;
+});
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: itemsWithUrls.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.title,
+    item: item.url,
+  })),
+};
+---
+
+<JsonLdMetadata jsonLd={breadcrumbSchema} />

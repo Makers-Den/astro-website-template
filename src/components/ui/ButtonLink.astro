@@ -1,0 +1,174 @@
+---
+import { clsxm } from '~/utils/helpers';
+import { ButtonVariant, buttonVariantStyles } from '~/utils/helpers';
+import UnstyledLink from './UnstyledLink.astro';
+
+export interface Props {
+  variant?: keyof typeof ButtonVariant;
+  isNavCta?: boolean;
+  href: string;
+  class?: string;
+  openNewTab?: boolean;
+  [key: string]: unknown;
+}
+
+const { variant = 'primary', isNavCta = false, href, class: className, ...rest } = Astro.props;
+
+const meetBaseUrl = 'calendly.com';
+const servicesRedirect = '/services';
+const isMeetUrl = href.includes(meetBaseUrl);
+const isServices = href.includes(servicesRedirect);
+
+const getDataClickId = () => {
+  if (isMeetUrl) return 'bookMeet';
+  if (isServices) return 'seeServices';
+  return '';
+};
+---
+
+<UnstyledLink
+  href={href}
+  data-clickid={getDataClickId()}
+  data-is-nav-cta={isNavCta}
+  data-variant={variant}
+  class={clsxm(
+    'inline-flex items-center rounded px-5 py-3 font-medium',
+    'focus:outline-none focus-visible:ring focus-visible:ring-primary-500',
+    'shadow-sm',
+    'transition-colors duration-75',
+    buttonVariantStyles[variant],
+    'disabled:cursor-not-allowed',
+    className
+  )}
+  {...rest}
+>
+  <span class="absolute button-observer-target" data-observer-target></span>
+  <slot />
+</UnstyledLink>
+
+
+<script>
+  class GlobalNavCtaManager {
+    private static instance: GlobalNavCtaManager | null = null;
+    private primaryButtonsInView: Set<Element> = new Set();
+    private lastState: boolean | null = null;
+    private debounceTimeout: number | null = null;
+
+    static getInstance(): GlobalNavCtaManager {
+      if (!GlobalNavCtaManager.instance) {
+        GlobalNavCtaManager.instance = new GlobalNavCtaManager();
+      }
+      return GlobalNavCtaManager.instance;
+    }
+
+    updateButtonState(buttonElement: Element, isIntersecting: boolean) {
+      if (isIntersecting) {
+        this.primaryButtonsInView.add(buttonElement);
+      } else {
+        this.primaryButtonsInView.delete(buttonElement);
+      }
+
+      if (this.debounceTimeout) {
+        clearTimeout(this.debounceTimeout);
+      }
+
+      this.debounceTimeout = window.setTimeout(() => {
+        this.checkAndFireStateChange();
+      }, 50);
+    }
+
+    private checkAndFireStateChange() {
+      const isNavCtaAlone = this.primaryButtonsInView.size === 0;
+
+      if (this.lastState !== isNavCtaAlone) {
+        this.lastState = isNavCtaAlone;
+        const event = new CustomEvent('navCtaStateChange', {
+          detail: { isNavCtaAlone },
+        });
+        document.dispatchEvent(event);
+      }
+    }
+
+    reset() {
+      this.primaryButtonsInView.clear();
+      this.lastState = null;
+      if (this.debounceTimeout) {
+        clearTimeout(this.debounceTimeout);
+        this.debounceTimeout = null;
+      }
+    }
+  }
+
+  class ButtonLinkObserver {
+    private observers: Map<Element, IntersectionObserver> = new Map();
+    private globalManager: GlobalNavCtaManager;
+
+    constructor() {
+      this.globalManager = GlobalNavCtaManager.getInstance();
+      this.init();
+    }
+
+    init() {
+      setTimeout(() => {
+        this.setupObservers();
+      }, 0);
+    }
+
+    setupObservers() {
+      const buttonLinks = document.querySelectorAll('[data-observer-target]');
+
+      buttonLinks.forEach((target) => {
+        const buttonElement = target.closest('[data-variant]');
+        if (!buttonElement) return;
+
+        const isNavCta = buttonElement.getAttribute('data-is-nav-cta') === 'true';
+        const variant = buttonElement.getAttribute('data-variant');
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              const buttonEl = entry.target.closest('[data-variant]');
+              if (!buttonEl) return;
+
+              if (!isNavCta && variant === 'primary') {
+                this.globalManager.updateButtonState(buttonEl, entry.isIntersecting);
+              }
+            });
+          },
+          {
+            threshold: 0.1,
+            rootMargin: '0px',
+          }
+        );
+
+        observer.observe(target);
+        this.observers.set(target, observer);
+      });
+    }
+
+    destroy() {
+      this.observers.forEach((observer) => {
+        observer.disconnect();
+      });
+      this.observers.clear();
+      this.globalManager.reset();
+    }
+  }
+
+  let __buttonLinkObserver: ButtonLinkObserver | null = null;
+
+  document.addEventListener('astro:before-swap', () => {
+    if (__buttonLinkObserver) {
+      __buttonLinkObserver.destroy();
+      __buttonLinkObserver = null;
+    }
+  });
+
+  document.addEventListener('astro:page-load', () => {
+    GlobalNavCtaManager.getInstance().reset();
+    if (__buttonLinkObserver) {
+      __buttonLinkObserver.destroy();
+    }
+    __buttonLinkObserver = new ButtonLinkObserver();
+  });
+</script>

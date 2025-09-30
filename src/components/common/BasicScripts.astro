@@ -1,0 +1,252 @@
+---
+
+---
+
+<script is:inline>
+  window.basic_script = true;
+
+  function balance(wrapper) {
+    const container = wrapper && wrapper.parentElement;
+    if (!container) return;
+
+    const update = function (width) {
+      wrapper.style.maxWidth = width + 'px';
+    };
+
+    // Reset wrapper width
+    wrapper.style.maxWidth = '';
+
+    // Get the initial container size
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    // Synchronously do binary search and calculate the layout
+    let lower = width / 2 - 0.25;
+    let upper = width + 0.5;
+    let middle;
+
+    if (width) {
+      // Ensure we don't search widths lower than when the text overflows
+      update(lower);
+      lower = Math.max(wrapper.scrollWidth, lower);
+
+      while (lower + 1 < upper) {
+        middle = Math.round((lower + upper) / 2);
+        update(middle);
+
+        if (container.clientHeight === height) upper = middle;
+        else lower = middle;
+      }
+
+      update(upper);
+    }
+  }
+
+  function initUtmMetadataGlobal() {
+    if (typeof window.__utm_source !== 'undefined') return;
+    const url = new URL(window.location.href);
+    const utmSource = url.searchParams.get('utm_source');
+    const utmCampaign = url.searchParams.get('utm_campaign');
+
+    if (utmSource) window.__utm_source = utmSource;
+    if (utmCampaign) window.__utm_campaign = utmCampaign;
+  }
+
+  function persistCookieyesElements() {
+    const cookieyesModal = document.querySelector('.cky-modal');
+    const cookieyesConsentContainer = document.querySelector('.cky-consent-container');
+    const cookieyesOverlay = document.querySelector('.cky-overlay');
+    const cookieyesElements = document.querySelector('.cky-elements');
+    const cookieyesStyle = document.getElementById('cky-style');
+    const cookieyesTargetStylesElement = document.getElementById('cky-styles');
+
+    if (cookieyesStyle && cookieyesTargetStylesElement && cookieyesTargetStylesElement.children.length === 0) {
+      cookieyesTargetStylesElement.appendChild(cookieyesStyle);
+    }
+
+    if (cookieyesElements.children.length === 0) {
+      if (cookieyesElements && cookieyesModal) {
+        cookieyesElements.appendChild(cookieyesModal);
+      }
+
+      if (cookieyesElements && cookieyesConsentContainer) {
+        cookieyesElements.appendChild(cookieyesConsentContainer);
+      }
+
+      if (cookieyesElements && cookieyesOverlay) {
+        cookieyesElements.appendChild(cookieyesOverlay);
+      }
+    }
+  }
+
+  // Observe DOM mutations to detect when CookieYes injects its elements
+  function onCookieyesElementsReady(callback) {
+    const areCookieyesElementsReady = () => {
+      const modal = document.querySelector('.cky-modal');
+      const consentContainer = document.querySelector('.cky-consent-container');
+      const overlay = document.querySelector('.cky-overlay');
+      const style = document.getElementById('cky-style');
+      return !!(modal && consentContainer && overlay && style);
+    };
+
+    const isLoaded = areCookieyesElementsReady();
+    if (isLoaded) {
+      callback();
+      return;
+    }
+
+    const observer = new MutationObserver(() => {
+      const isLoaded = areCookieyesElementsReady();
+      if (isLoaded) {
+        observer.disconnect();
+        callback();
+      }
+    });
+
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+  }
+
+  function handleCookieConsentUpdate() {
+    document.addEventListener('cookieyes_consent_update', function (eventData) {
+      const consent = eventData.detail.accepted;
+      const advertisement = consent.includes('advertisement');
+      const analytics = consent.includes('analytics');
+      const functional = consent.includes('functional');
+      const other = consent.includes('other');
+
+      gtag('consent', 'update', {
+        ad_storage: advertisement ? 'granted' : 'denied',
+        ad_user_data: advertisement ? 'granted' : 'denied',
+        ad_personalization: advertisement ? 'granted' : 'denied',
+        analytics_storage: analytics ? 'granted' : 'denied',
+        functionality_storage: functional ? 'granted' : 'denied',
+        personalization_storage: other ? 'granted' : 'denied',
+        security_storage: 'granted',
+      });
+      gtag('set', 'ads_data_redaction', !advertisement);
+      dataLayer.push({ event: 'cookie_consent_update' });
+    });
+  }
+
+  const onPageShow = function () {
+    document.documentElement.classList.add('motion-safe:scroll-smooth');
+    document.body.classList.remove('overflow-hidden');
+  };
+
+  window.onpageshow = onPageShow;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    onCookieyesElementsReady(() => persistCookieyesElements());
+    window.balance = balance;
+    initUtmMetadataGlobal();
+  });
+
+  handleCookieConsentUpdate();
+
+  document.addEventListener('astro:page-load', () => {
+    onPageShow();
+  });
+</script>
+
+<script is:inline>
+  /* Inspired by: https://github.com/heidkaemper/tailwindcss-intersect */
+  const Observer = {
+    observer: null,
+    delayBetweenAnimations: 100,
+    animationCounter: 0,
+
+    start() {
+      const selectors = [
+        '[class*=" intersect:"]',
+        '[class*=":intersect:"]',
+        '[class^="intersect:"]',
+        '[class="intersect"]',
+        '[class*=" intersect "]',
+        '[class^="intersect "]',
+        '[class$=" intersect"]',
+      ];
+
+      const elements = Array.from(document.querySelectorAll(selectors.join(',')));
+
+      const getThreshold = (element) => {
+        if (element.classList.contains('intersect-full')) return 0.99;
+        if (element.classList.contains('intersect-half')) return 0.5;
+        if (element.classList.contains('intersect-quarter')) return 0.25;
+        return 0;
+      };
+
+      elements.forEach((el) => {
+        el.setAttribute('no-intersect', '');
+        el._intersectionThreshold = getThreshold(el);
+      });
+
+      const callback = (entries) => {
+        entries.forEach((entry) => {
+          requestAnimationFrame(() => {
+            const target = entry.target;
+            const intersectionRatio = entry.intersectionRatio;
+            const threshold = target._intersectionThreshold;
+
+            if (target.classList.contains('intersect-no-queue')) {
+              if (entry.isIntersecting) {
+                target.removeAttribute('no-intersect');
+                if (target.classList.contains('intersect-once')) {
+                  this.observer.unobserve(target);
+                }
+              } else {
+                target.setAttribute('no-intersect', '');
+              }
+              return;
+            }
+
+            if (intersectionRatio >= threshold) {
+              if (!target.hasAttribute('data-animated')) {
+                target.removeAttribute('no-intersect');
+                target.setAttribute('data-animated', 'true');
+
+                const delay = this.animationCounter * this.delayBetweenAnimations;
+                this.animationCounter++;
+
+                target.style.transitionDelay = `${delay}ms`;
+                target.style.animationDelay = `${delay}ms`;
+
+                if (target.classList.contains('intersect-once')) {
+                  this.observer.unobserve(target);
+                }
+              }
+            } else {
+              target.setAttribute('no-intersect', '');
+              target.removeAttribute('data-animated');
+              target.style.transitionDelay = '';
+              target.style.animationDelay = '';
+
+              this.animationCounter = 0;
+            }
+          });
+        });
+      };
+
+      this.observer = new IntersectionObserver(callback.bind(this), { threshold: [0, 0.25, 0.5, 0.99] });
+
+      elements.forEach((el) => {
+        this.observer.observe(el);
+      });
+    },
+
+    stop() {
+      if (this.observer) {
+        this.observer.disconnect();
+        this.observer = null;
+      }
+      this.animationCounter = 0;
+    },
+  };
+
+  document.addEventListener('astro:before-swap', () => {
+    Observer.stop();
+  });
+
+  document.addEventListener('astro:page-load', () => {
+    Observer.start();
+  });
+</script>

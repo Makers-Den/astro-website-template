@@ -1,0 +1,13 @@
+---
+import Spacer from './Spacer.astro';
+import type { Spacing } from '~/types/storyblok';
+
+export interface Props {
+  className?: string;
+  size?: Spacing;
+}
+
+const { className, size } = Astro.props;
+---
+
+<Spacer variant="vertical" className={className} size={size} />

@@ -1,0 +1,23 @@
+---
+import UnstyledLink from "~/components/ui/UnstyledLink.astro";
+import Typography from "~/components/ui/typography/Typography.astro";
+import { clsxm } from "~/utils/helpers";
+import { sbLinkToHref } from "~/utils/storyblokRepository/helpers";
+import type { LinkStoryblok } from "~/types/storyblok";
+import type { BlokProps } from "~/types/storyblok.custom";
+
+type Props = BlokProps<LinkStoryblok> & {
+  class?: string;
+};
+
+const { blok, class: className } = Astro.props as Props;
+
+const { name, link } = blok;
+
+const href = sbLinkToHref(link);
+---
+
+<UnstyledLink href={href} class={clsxm('flex items-center', 'text-lg font-medium rounded-xl text-gray-500', className)}>
+  <Typography variant="navLink" as="span">{name}</Typography>  
+</UnstyledLink>
+

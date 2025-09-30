@@ -1,0 +1,16 @@
+---
+import { COOKIE_CONSENT_ENABLED, PUBLIC_STAPE_URL, PUBLIC_GTM_ID } from 'astro:env/server';
+
+const id = PUBLIC_GTM_ID;
+const cookieConsentEnabled = COOKIE_CONSENT_ENABLED === 'true';
+const shouldShow = id && cookieConsentEnabled;
+const stapeUrl = PUBLIC_STAPE_URL;
+---
+
+{
+  shouldShow && (
+    <noscript>
+      <iframe src={`${stapeUrl}/ns.html?id=${id}`} height="0" width="0" style="display:none;visibility:hidden" />
+    </noscript>
+  )
+}

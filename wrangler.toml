@@ -1,0 +1,24 @@
+name = "astro-website-template"
+main = "./dist/_worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+binding = "STATIC_ASSETS"
+directory = "./dist"
+
+[observability]
+enabled = true
+
+[version_metadata]
+binding = "CF_VERSION_METADATA"
+
+# Environment variables
+[vars]
+COOKIE_CONSENT_ENABLED = "true"
+STORYBLOK_VERSION = "published"
+STORYBLOK_SPACE_ID = "146587"
+PUBLIC_STAPE_URL = "https://gwvgoiqp.eui.stape.net"
+PUBLIC_STAPE_GTM_SCRIPT_LINK = "https://gwvgoiqp.eui.stape.net/egwvgoiqp.js?"
+PUBLIC_STAPE_GTM_SCRIPT_ARG = "cpatfv=GRVUKDM7WlJJIVtZUEA0QQZMW0FW"
+CLOUDFLARE_ZONE_ID = "5dfb99031a4a92762f0edf3fda461cb1"

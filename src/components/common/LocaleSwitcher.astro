@@ -1,0 +1,39 @@
+---
+import { AVAILABLE_LANGUAGES } from "../../utils/storyblokRepository/helpers";
+
+export interface Props {
+	class?: string;
+	className?: string;
+}
+
+const props = Astro.props as Props;
+const wrapperClass = [props.class, props.className].filter(Boolean).join(" ");
+const { pathname, search, hash } = Astro.url;
+const segments = pathname.split("/").filter(Boolean);
+const currentLocale = Astro.currentLocale;
+
+const restSegments = currentLocale && currentLocale !== 'en' ? segments.slice(1) : segments;
+let restPathname = "/" + restSegments.join("/");
+if (restSegments.length === 0) restPathname = "/";
+
+function buildHref(locale: string) {
+    if (locale === 'en') {
+        return `${restPathname}${search}${hash}`;
+    }
+	const base = locale ? `/${locale}${restPathname}` : restPathname;
+	return `${base}${search}${hash}`;
+}
+---
+
+<div class={wrapperClass}>
+	{AVAILABLE_LANGUAGES.map((locale, idx) => (
+		<a
+			href={buildHref(locale)}
+			class={`px-1.5 uppercase leading-5 text-gray-500 ${idx === 0 ? "pl-0" : "border-l border-gray-500"} ${locale === currentLocale ? "font-semibold" : ""}`}
+			aria-current={locale === currentLocale ? "true" : "false"}
+		>
+			{locale}
+		</a>
+	))}
+</div>
+

@@ -1,0 +1,24 @@
+---
+import Container from "~/components/ui/Container.astro";
+import Typography from "~/components/ui/typography/Typography.astro";
+import Office from "./Office.astro";
+import type { SimpleFourColumnStoryblok } from "~/types/storyblok";
+import type { BlokProps } from "~/types/storyblok.custom";
+
+type Props = BlokProps<SimpleFourColumnStoryblok>;
+const { blok } = Astro.props;
+const { title, description, offices } = blok;
+---
+
+<div class="bg-white">
+  <Container class="py-24 sm:py-32">
+    <Typography as="h2" variant="mediumHeading" class="text-primary-900">{title}</Typography>
+    <Typography as="p" variant="text" class="mt-6 max-w-3xl text-primary-700">{description}</Typography>
+    <div class="mt-10 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      {offices?.map((office) => (
+        <Office blok={office} />
+      ))}
+    </div>
+  </Container>
+</div>
+

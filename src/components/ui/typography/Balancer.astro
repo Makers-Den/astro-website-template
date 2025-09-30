@@ -1,0 +1,92 @@
+---
+import type { TypographyProps } from "./Typography.types";
+
+export type Props = TypographyProps;
+
+const balancerId = `balancer-${Math.random().toString(36).slice(2, 10)}`;
+---
+
+<span class="text-balance" data-balancer-id={balancerId}>
+  <slot />
+</span>
+<script>
+  function balance(wrapper) {
+    const container = wrapper && wrapper.parentElement;
+    if (!container) return;
+
+    const update = function (width) {
+      wrapper.style.maxWidth = width + "px";
+    };
+
+    // Reset wrapper width
+    wrapper.style.maxWidth = "";
+
+    // Get the initial container size
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    // Synchronously do binary search and calculate the layout
+    let lower = width / 2 - 0.25;
+    let upper = width + 0.5;
+    let middle;
+
+    if (width) {
+      // Ensure we don't search widths lower than when the text overflows
+      update(lower);
+      lower = Math.max(wrapper.scrollWidth, lower);
+
+      while (lower + 1 < upper) {
+        middle = Math.round((lower + upper) / 2);
+        update(middle);
+
+        if (container.clientHeight === height) upper = middle;
+        else lower = middle;
+      }
+
+      update(upper);
+    }
+  }
+  window["balance"] = balance;
+</script>
+<script is:inline define:vars={{ balancerId }}>
+  (function () {
+    let balancerInitialized = false;
+
+    const initBalancer = () => {
+      if (balancerInitialized) return;
+
+      const el = document.querySelector(`[data-balancer-id="${balancerId}"]`);
+      if (!el) return;
+
+      if (typeof window.balance !== "function") return;
+
+      if (el._balancerObserver) {
+        el._balancerObserver.disconnect();
+        delete el._balancerObserver;
+      }
+
+      window.balance(el);
+      balancerInitialized = true;
+
+      if (typeof ResizeObserver === "undefined") return;
+
+      const container = el.parentElement;
+
+      if (container) {
+        el._balancerObserver = new ResizeObserver(() => {
+          if (typeof window.balance === "function") window.balance(el);
+        }).observe(container);
+      }
+    };
+
+    // Listen for both page load events
+    document.addEventListener("astro:page-load", initBalancer);
+
+    // Listen for window load as a fallback
+    if (document.readyState === "loading") {
+      window.addEventListener("load", initBalancer);
+    } else {
+      initBalancer();
+    }
+  })();
+</script>

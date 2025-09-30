@@ -1,0 +1,40 @@
+{
+  "spacing": {
+    "name": "spacing",
+    "slug": "spacing",
+    "entries": [
+      {
+        "name": "none",
+        "value": "none"
+      },
+      {
+        "name": "xs",
+        "value": "xs"
+      },
+      {
+        "name": "sm",
+        "value": "sm"
+      },
+      {
+        "name": "md",
+        "value": "md"
+      },
+      {
+        "name": "lg",
+        "value": "lg"
+      },
+      {
+        "name": "xl",
+        "value": "xl"
+      },
+      {
+        "name": "2xl",
+        "value": "2xl"
+      },
+      {
+        "name": "3xl",
+        "value": "3xl"
+      }
+    ]
+  }
+}

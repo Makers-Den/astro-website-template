@@ -1,0 +1,18 @@
+---
+export interface Props {
+  jsonLd?: string | Record<string, unknown>;
+}
+
+const { jsonLd } = Astro.props;
+
+// Parse the JSON-LD content
+let jsonMetadata = '';
+try {
+  const jsonObject = typeof jsonLd === 'string' ? JSON.parse(jsonLd) : jsonLd;
+  jsonMetadata = JSON.stringify(jsonObject, null, 0);
+} catch (error) {
+  console.error('Error parsing JSON-LD:', error);
+}
+---
+
+{!!jsonMetadata && <script type="application/ld+json" set:html={jsonMetadata} />}

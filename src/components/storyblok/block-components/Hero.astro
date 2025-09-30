@@ -1,0 +1,40 @@
+---
+import StoryblokImage from "~/components/ui/StoryblokImage.astro";
+import Typography from "~/components/ui/typography/Typography.astro";
+import CtaLink from "./CtaLink.astro";
+import type { HeroStoryblok } from "~/types/storyblok";
+import type { BlokProps } from "~/types/storyblok.custom";
+import { makeEditable } from "~/utils/storyblokRepository/helpers";
+
+type Props = BlokProps<HeroStoryblok>;
+
+const { blok } = Astro.props;
+const { headingBlack, headingColorful, description, image, ctaLink } = blok;
+---
+
+<div class="relative bg-gray-50" {...makeEditable(blok)}>
+  <main class="lg:relative">
+    <div class="mx-auto w-full max-w-7xl pt-16 pb-20 text-center lg:py-48 lg:text-left">
+      <div class="lg:w-1/2">
+        <div class="px-4 sm:px-8 lg:w-1/2 lg:pl-20 xl:pr-16">
+          <Typography as="h1" variant="h1">
+            <span class="block xl:inline">{headingBlack}</span>{' '}
+            <span class="block text-primary-600 xl:inline">{headingColorful}</span>
+          </Typography>
+          <Typography as="p" variant="introLarge" class="mx-auto mt-3 max-w-md text-gray-500 md:mt-5 md:max-w-3xl">
+            {description}
+          </Typography>
+          {ctaLink?.map((linkContent) => (
+            <div class="mt-10 sm:flex sm:justify-center lg:justify-start">
+              <CtaLink blok={linkContent} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+    <div class="relative h-64 w-full sm:h-72 md:h-96 lg:absolute lg:inset-y-0 lg:right-0 lg:h-full lg:w-1/2">
+      <StoryblokImage class="absolute inset-0 h-full w-full object-cover" src={image?.filename} alt={image?.alt} />
+    </div>
+  </main>
+</div>
+

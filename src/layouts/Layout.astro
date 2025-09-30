@@ -1,0 +1,102 @@
+---
+import '~/assets/styles/tailwind.css';
+
+import CommonMeta from '~/components/metadata/CommonMeta.astro';
+import Favicons from '~/components/common/Favicons.astro';
+import Fonts from '~/components/common/Fonts.astro';
+import BasicScripts from '~/components/common/BasicScripts.astro';
+import Breadcrumbs from '~/components/metadata/Breadcrumbs.astro';
+import Header from '~/components/common/header/Header.astro';
+import Footer from '~/components/common/Footer.astro';
+import type { GlobalSettingsStoryblok } from '~/types/storyblok';
+import type { StoryblokStory } from '~/types/storyblok';
+
+// Comment the line below to disable View Transitions
+import { ClientRouter } from 'astro:transitions';
+
+import GoogleTagManagerBody from '~/components/analytics/GoogleTagManagerBody.astro';
+import GoogleTagManagerHead from '~/components/analytics/GoogleTagManagerHead.astro';
+import type { StoryblokPageComponent } from '~/types/storyblok.custom';
+import CodeTheme from '~/components/common/CodeTheme.astro';
+import Metadata from '~/components/metadata/Metadata.astro';
+import { generateMetadata } from '~/utils/metadata';
+
+export interface Props {
+  blok?: StoryblokPageComponent;
+  headerProps?: Record<string, unknown>;
+  globalSettingsStory?: StoryblokStory<GlobalSettingsStoryblok> | null;
+}
+
+const pathname = Astro.url.pathname;
+const { blok, headerProps, globalSettingsStory } = Astro.props;
+
+// Generate comprehensive metadata
+const metadata = generateMetadata({ blok, globalSettingsStory, pathname, origin: Astro.url.origin });
+
+// Generate breadcrumbs for blog posts
+const breadcrumbItems: Array<{ title: string; path: string }> = [];
+if (blok?.component === 'Post') {
+  breadcrumbItems.push(
+    {
+      title: 'Blog',
+      path: '/blog',
+    },
+    {
+      title: blok?.title || 'Post',
+      path: pathname,
+    }
+  );
+}
+
+const navItems = globalSettingsStory?.content?.navItems ? globalSettingsStory.content.navItems : [];
+const ctaLink = [];
+
+const locale = Astro.currentLocale;
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <GoogleTagManagerHead />
+    <link rel="dns-prefetch" href="https://a.storyblok.com/" />
+    <link rel="preconnect" href="https://a.storyblok.com/" />
+    <link rel="dns-prefetch" href="https://app.storyblok.com/" />
+    <link rel="preconnect" href="https://app.storyblok.com/" />
+    <link rel="preconnect" href="https://app.storyblok.com/" crossorigin />
+
+    <CommonMeta />
+    <Favicons />
+    <Fonts />
+
+    <Metadata {...metadata} />
+    <CodeTheme />
+
+    {breadcrumbItems.length > 0 && <Breadcrumbs items={breadcrumbItems} />}
+
+    <!-- Page-specific head content (preloads, etc.) -->
+    <slot name="head" />
+
+    <!-- Comment the line below to disable View Transitions -->
+    <ClientRouter fallback="swap" />
+
+    <style is:inline transition:persist-props transition:persist="cky-styles" id="cky-styles">
+      /* CookieYes styles */
+    </style>
+  </head>
+
+  <body>
+    <div transition:persist-props transition:persist="cky-elements" class="cky-elements"></div>
+    <GoogleTagManagerBody />
+    <Header items={navItems} ctaLink={ctaLink} {...headerProps} />
+
+    <slot />
+
+    <Footer
+      sections={globalSettingsStory?.content?.footerSections}
+      bottomLinks={globalSettingsStory?.content?.bottomLinks}
+    />
+
+    <BasicScripts />
+  </body>
+</html>

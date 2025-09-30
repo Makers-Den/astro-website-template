@@ -1,0 +1,27 @@
+---
+import Container from "~/components/ui/Container.astro";
+import ButtonLink from "~/components/ui/ButtonLink.astro";
+import Typography from "~/components/ui/typography/Typography.astro";
+import { makeEditable, sbLinkToHref } from "~/utils/storyblokRepository/helpers";
+import type { SimpleCenterBrandedStoryblok } from "~/types/storyblok";
+import type { BlokProps } from "~/types/storyblok.custom";
+
+type Props = BlokProps<SimpleCenterBrandedStoryblok>;
+
+const { blok } = Astro.props;
+const { topHeader, bottomHeader, description, link } = blok;
+---
+
+<div class="bg-primary-900" {...makeEditable(blok)}>
+  <Container class="max-w-2xl py-16 text-center sm:py-20">
+    <Typography as="h2" variant="h2" class="text-white">
+      <span class="block">{topHeader}</span>
+      <span class="block">{bottomHeader}</span>
+    </Typography>
+    <Typography as="p" variant="intro" class="mt-4 font-normal text-primary-200">{description}</Typography>
+    {link?.map((linkContent) => (
+      <ButtonLink class="mt-8 w-full sm:w-auto" href={sbLinkToHref(linkContent.link)}>{linkContent.name}</ButtonLink>
+    ))}
+  </Container>
+</div>
+---

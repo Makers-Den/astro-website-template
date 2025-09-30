@@ -1,0 +1,127 @@
+---
+import Container from "~/components/ui/Container.astro";
+import UnstyledLink from "~/components/ui/UnstyledLink.astro";
+import ButtonLink from "~/components/ui/ButtonLink.astro";
+import DesktopMenu from "~/components/common/header/DesktopMenu.astro";
+import MobileMenu from "~/components/common/header/MobileMenu.astro";
+import { clsxm } from "~/utils/helpers";
+import { sbLinkToHref } from "~/utils/storyblokRepository/helpers";
+import type { NavSectionStoryblok, LinkStoryblok } from "~/types/storyblok";
+import SvgIcon from "~/components/ui/SvgIcon.astro";
+import LocaleSwitcher from "../LocaleSwitcher.astro";
+
+export interface Props {
+  items?: Array<NavSectionStoryblok | LinkStoryblok>;
+  ctaLink?: Array<LinkStoryblok>;
+  class?: string;
+}
+
+const { items = [], ctaLink = [], class: className } = Astro.props as Props;
+
+const primaryCta = ctaLink && ctaLink.length > 0 ? ctaLink[0] : undefined;
+const ctaHref = primaryCta ? sbLinkToHref(primaryCta.link as unknown as any) : undefined;
+const ctaText = primaryCta?.name || '';
+---
+
+<nav
+  id="global-nav"
+  class={clsxm(
+    'translate-y-0 transition-transform duration-150',
+    'bg-white shadow',
+    'sticky top-0 z-30',
+    'h-[88px]',
+    'flex items-center',
+    className
+  )}
+>
+  <Container class="flex h-full flex-1 items-center justify-between gap-4">
+    <div class="flex h-full flex-1 grid-cols-12 items-center gap-4 lg:grid">
+      <UnstyledLink
+        href="/"
+        class={clsxm(
+          'xs:col-span-5 col-span-3 md:col-span-2',
+          'mr-3',
+          'h-12 w-12',
+          'block'
+        )}
+        aria-label="Home"
+      >
+        <SvgIcon name="HiCake" class="h-12 w-12 text-primary-600" />
+        <span class="sr-only">Home</span>
+      </UnstyledLink>
+
+      <div
+        class={clsxm(
+          'h-full',
+          'col-span-10',
+          'hidden lg:flex',
+          'items-center justify-between'
+        )}
+      >
+        <div class={clsxm('ml-1 h-full gap-6 xl:gap-20', 'hidden lg:flex')}>
+          <DesktopMenu items={items} />
+        </div>
+      </div>
+    </div>
+
+    <div class="flex">
+      {ctaHref && (
+        <ButtonLink
+          class="justify-self-end hidden sm:inline-flex"
+          variant="outline"
+          href={ctaHref}
+          isNavCta={true}
+        >
+          {ctaText}
+        </ButtonLink>
+      )}
+
+      <LocaleSwitcher className='hidden lg:block' />
+
+
+      <div class="ml-2 flex items-center justify-self-end lg:hidden">
+        <MobileMenu items={items} />
+      </div>
+    </div>
+  </Container>
+
+  <script>
+    let lastScrollY = 0;
+    let navIsVisible = true;
+    let navEl: HTMLElement | null = null;
+
+    function onScroll() {
+      if (!navEl) return;
+      const currentScrollY = window.pageYOffset;
+
+      if (!navIsVisible && currentScrollY < lastScrollY) {
+        navIsVisible = true;
+        navEl.style.transform = 'translateY(0px)';
+      }
+
+      if (
+        navIsVisible &&
+        currentScrollY > lastScrollY &&
+        currentScrollY > 150
+      ) {
+        navIsVisible = false;
+        navEl.style.transform = 'translateY(-150px)';
+      }
+
+      lastScrollY = currentScrollY;
+    }
+
+    function attach() {
+      navEl = document.getElementById('global-nav');
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
+    function detach() {
+      window.removeEventListener('scroll', onScroll);
+    }
+
+    document.addEventListener('astro:page-load', attach);
+    document.addEventListener('astro:before-swap', detach);
+  </script>
+</nav>
+

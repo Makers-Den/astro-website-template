@@ -1,0 +1,39 @@
+---
+import Container from "~/components/ui/Container.astro";
+import ButtonLink from "~/components/ui/ButtonLink.astro";
+import Typography from "~/components/ui/typography/Typography.astro";
+import type { FeedbackSimpleStoryblok } from "~/types/storyblok";
+import type { BlokProps } from "~/types/storyblok.custom";
+import { makeEditable, sbLinkToHref } from "~/utils/storyblokRepository/helpers";
+
+type Props = BlokProps<FeedbackSimpleStoryblok>;
+const { blok } = Astro.props;
+const { status, title, description, links } = blok;
+---
+
+<div class="min-h-full bg-white px-4 py-16 sm:px-6 sm:py-24 md:grid md:place-items-center lg:px-8" {...makeEditable(blok)}>
+  <Container class=" max-w-max">
+    <main class="sm:flex">
+      <Typography as="h2" variant="h2" class="text-4xl  text-primary-900 sm:text-5xl">{status || 'Please fill status'}</Typography>
+      <div class="sm:ml-6">
+        <div class="sm:border-l sm:border-gray-200 sm:pl-6">
+          <Typography as="h1" variant="h1" class="md:text-5xl lg:text-5xl">{title || 'Please fill title'}</Typography>
+          <Typography as="p" variant="body" class="mt-1 text-primary-700">{description || 'Please fill description'}</Typography>
+        </div>
+        <div class="mt-10 flex space-x-3 sm:border-l sm:border-transparent sm:pl-6">
+          {links?.map((linkContent, idx) => (
+            <>
+              {idx === 0 && (
+                <ButtonLink class=" bg-primary-900 px-4 py-2 text-sm  text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2" href={sbLinkToHref(linkContent.link)}>{linkContent.name}</ButtonLink>
+              )}
+              {idx === 1 && (
+                <ButtonLink class="bg-primary-100 px-4 py-2 text-sm  text-primary-700 hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2" href={sbLinkToHref(linkContent.link)}>{linkContent.name}</ButtonLink>
+              )}
+            </>
+          ))}
+        </div>
+      </div>
+    </main>
+  </Container>
+</div>
+

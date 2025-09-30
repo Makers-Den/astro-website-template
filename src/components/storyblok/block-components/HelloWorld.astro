@@ -1,0 +1,15 @@
+---
+import Container from "~/components/ui/Container.astro";
+
+export interface Props {
+  name?: string;
+}
+
+const { name } = Astro.props as Props;
+---
+
+<Container>
+  <h2>Hello {name || 'Unknown'}</h2>
+  
+</Container>
+

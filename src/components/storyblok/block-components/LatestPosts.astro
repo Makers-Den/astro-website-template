@@ -1,0 +1,53 @@
+---
+import UnstyledLink from "~/components/ui/UnstyledLink.astro";
+import Typography from "~/components/ui/typography/Typography.astro";
+import type { LatestPostsStoryblok, PostStoryblok, StoryblokStory } from "~/types/storyblok";
+import type { BlokProps } from "~/types/storyblok.custom";
+import { getStoryblokStories } from "~/utils/storyblokRepository";
+import { makeEditable } from "~/utils/storyblokRepository/helpers";
+
+type Props = BlokProps<LatestPostsStoryblok>;
+
+const { blok } = Astro.props;
+const { title, category } = blok;
+
+
+const categoryUuid = category && (typeof category !== 'string') && ("uuid" in category) ? category.uuid : category;
+
+const posts = await getStoryblokStories<StoryblokStory<PostStoryblok>>({
+  starts_with: 'blog/',
+  content_type: 'Post',
+  sort_by: 'position',
+  language: Astro.currentLocale,
+  ...(category && {
+    filter_query: [
+      {
+        condition: '[categories][in_array]',
+        value: categoryUuid,
+      },
+    ],
+  }),
+  page: 1,
+  per_page: 3,
+});
+console.log(posts);
+---
+
+<div class="relative bg-white py-16 sm:py-24 lg:py-32" {...makeEditable(blok)}>
+  <div class="mx-auto max-w-md px-4 text-center sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
+    <Typography as="p" variant="eyebrow">{title}</Typography>
+
+    <div class="mt-12">
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {posts?.map((post) => (
+          <div class="pt-6">
+            <div class="flow-root rounded-lg bg-gray-50 px-6 py-8">
+              <UnstyledLink class="mt-8 text-lg font-medium tracking-tight text-gray-900" href={`/${post.full_slug}`.replace(/^\/+/, '/')}>{post.content?.title}</UnstyledLink>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,44 @@
+---
+import { clsxm } from '~/utils/helpers';
+import type { Spacing } from '~/types/storyblok';
+
+export interface Props {
+  className?: string;
+  size?: Spacing;
+  variant?: 'vertical' | 'horizontal';
+}
+
+const { className, variant = 'vertical', size = 'md' } = Astro.props;
+
+// Responsive height classes for vertical spacing
+const sizeToHeightClassnames: { [key in Spacing]: string } = {
+  none: '',
+  xs: 'h-2 md:h-6 lg:h-8',
+  sm: 'h-4 md:h-8 lg:h-12',
+  md: 'h-6 md:h-10 lg:h-16',
+  lg: 'h-8 md:h-12 lg:h-20',
+  xl: 'h-10 md:h-14 lg:h-24',
+  '2xl': 'h-14 md:h-20 lg:h-32',
+  '3xl': 'h-16 md:h-28 lg:h-40',
+};
+
+// Responsive width classes for horizontal spacing
+const sizeToWidthClassnames: { [key in Spacing]: string } = {
+  none: '',
+  xs: 'w-2 md:w-6 lg:w-8',
+  sm: 'w-4 md:w-8 lg:w-12',
+  md: 'w-6 md:w-10 lg:w-16',
+  lg: 'w-8 md:w-12 lg:w-20',
+  xl: 'w-10 md:w-14 lg:w-24',
+  '2xl': 'w-14 md:w-20 lg:w-32',
+  '3xl': 'w-16 md:w-28 lg:w-40',
+};
+
+const spacingClasses = clsxm(
+  variant === 'vertical' && size && sizeToHeightClassnames[size],
+  variant === 'horizontal' && size && sizeToWidthClassnames[size],
+  className
+);
+---
+
+<div class={spacingClasses}></div>

@@ -1,0 +1,43 @@
+---
+
+import { clsxm } from '~/utils/helpers';
+import { type Spacing } from '~/types/storyblok';
+import VSpacer from '../ui/VSpacer.astro';
+
+interface ContainerProps {
+  id?: string;
+  class?: string;
+  /** You should probably be using 'md' most of the time, which his the default. */
+  pad?: 'none' | 'sm' | 'md';
+  spacing?: Spacing | { top?: Spacing; bottom?: Spacing };
+}
+
+type Props = ContainerProps;
+
+const { id, class: className, spacing } = Astro.props;
+
+function isSimpleSpacing(
+  spacing?: Spacing | { top?: Spacing; bottom?: Spacing }
+): spacing is Spacing {
+  return !!spacing && typeof spacing === 'string';
+}
+
+---
+<section
+  id={id}
+  class={clsxm(
+    'mx-auto max-w-7xl px-4 sm:px-6 lg:px-8',
+    className
+  )}
+>
+  {spacing && isSimpleSpacing(spacing) && <VSpacer size={spacing} />}
+  {spacing && !isSimpleSpacing(spacing) && <VSpacer size={spacing.top} />}
+
+  <slot />
+  
+  {spacing && isSimpleSpacing(spacing) && <VSpacer size={spacing} />}
+  {spacing && !isSimpleSpacing(spacing) && (
+    <VSpacer size={spacing.bottom} />
+  )}
+</section>
+

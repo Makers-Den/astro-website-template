@@ -1,0 +1,33 @@
+---
+import { richtextToString } from '~/utils/richtext-astro';
+import JsonLdMetadata from './JsonLdMetadata.astro';
+import type { StoryblokRichtext } from '~/types/storyblok';
+
+export type Props = {
+  questions: Array<{
+    question: string;
+    answer: StoryblokRichtext;
+  }>;
+};
+
+/**
+ * FAQ structured data for Google rich results.
+ * Follows the FAQPage schema: https://schema.org/FAQPage
+ */
+const { questions } = Astro.props;
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: questions.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: richtextToString(item.answer),
+    },
+  })),
+};
+---
+
+<JsonLdMetadata jsonLd={faqSchema} />

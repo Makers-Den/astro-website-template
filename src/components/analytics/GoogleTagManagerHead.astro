@@ -1,0 +1,38 @@
+---
+import { COOKIE_CONSENT_ENABLED, PUBLIC_STAPE_GTM_SCRIPT_LINK, PUBLIC_STAPE_GTM_SCRIPT_ARG, PUBLIC_GTM_ID } from 'astro:env/server';
+
+const id = PUBLIC_GTM_ID;
+const cookieConsentEnabled = COOKIE_CONSENT_ENABLED === 'true';
+const shouldShow = id && cookieConsentEnabled;
+const stapeScriptLink = PUBLIC_STAPE_GTM_SCRIPT_LINK;
+const stapeScriptArg = PUBLIC_STAPE_GTM_SCRIPT_ARG;
+---
+{shouldShow && (
+  <>
+  <script is:inline data-astro-rerun>
+    window.dataLayer = window.dataLayer || [];
+
+    window.dataLayer.push({
+      'event': 'virtualPageview',
+      'pageUrl': window.location.href,
+      'pageTitle': document.title,
+    });
+  </script>
+  <script is:inline type="text/partytown" define:vars={{ stapeScriptLink, stapeScriptArg }}>
+    (function(w,d,s,l){
+        w[l]=w[l]||[];
+        w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+        const f=d.getElementsByTagName(s)[0];
+        const j=d.createElement(s);
+        j.async=true;
+        j.src=`${stapeScriptLink}${stapeScriptArg}`;
+        f.parentNode.insertBefore(j,f);
+
+        w.gtag = function gtag() {
+          // eslint-disable-next-line prefer-rest-params
+          dataLayer.push(arguments);
+        };
+      })(window,document,'script','dataLayer');
+    </script>
+  </>
+)}

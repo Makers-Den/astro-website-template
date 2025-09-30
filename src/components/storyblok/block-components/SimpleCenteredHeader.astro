@@ -1,0 +1,32 @@
+---
+import Container from "~/components/ui/Container.astro";
+import VSpacer from "~/components/ui/VSpacer.astro";
+import Typography from "~/components/ui/typography/Typography.astro";
+import RichTextRenderer from "~/components/storyblok/utils/RichTextRenderer.astro";
+import type { SimpleCenteredHeaderStoryblok } from "~/types/storyblok";
+import type { BlokProps } from "~/types/storyblok.custom";
+import { makeEditable } from "~/utils/storyblokRepository/helpers";
+
+type Props = BlokProps<SimpleCenteredHeaderStoryblok>;
+
+const { blok } = Astro.props;
+const { title, subTitle, description, spacingBottom = 'md', spacingTop = 'md' } = blok;
+---
+
+<div class="bg-white" {...makeEditable(blok)}>
+  <VSpacer size={spacingTop} />
+  <Container>
+    <div class="text-center">
+      <Typography as="p" variant="eyebrow">{title || 'Fill the title'}</Typography>
+
+      <Typography as='p' variant='h1' class='mt-1 text-4xl font-extrabold text-primary-900 sm:text-5xl'>
+        {subTitle || 'Fill the subtitle'}
+      </Typography>
+      <div class="mx-auto mt-5 max-w-xl text-xl text-primary-700">
+        <RichTextRenderer content={description} />
+      </div>
+    </div>
+  </Container>
+  <VSpacer size={spacingBottom} />
+</div>
+

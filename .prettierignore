@@ -1,0 +1,9 @@
+dist
+node_modules
+.github
+.changeset
+**/storyblok-components.json
+**/storyblok-datasources.json
+pnpm-lock.yaml
+**/storyblok.d.ts
+src/components/analytics/GoogleTagManagerHead.astro

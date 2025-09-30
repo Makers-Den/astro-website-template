@@ -1,0 +1,23 @@
+---
+import { Prism } from '@astrojs/prism';
+import '~/utils/prismLanguages';
+
+const { lang, code } = Astro.props;
+
+type ProgrammingLanguages = 'bash' | 'javascript' | 'typescript' | 'html' | 'css' | 'scss' | 'tsx' | 'jsx';
+
+const languageDict: { [key in ProgrammingLanguages]: string } = {
+  javascript: 'js',
+  typescript: 'ts',
+  html: 'html',
+  css: 'css',
+  scss: 'scss',
+  tsx: 'tsx',
+  jsx: 'jsx',
+  bash: 'bash',
+};
+
+const bareLanguage = lang.replace('language-', '').toLowerCase() as ProgrammingLanguages;
+---
+
+<Prism lang={languageDict[bareLanguage] ?? 'js'} code={code} class="p-[1em] overflow-auto" />

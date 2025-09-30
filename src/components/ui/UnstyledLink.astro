@@ -1,0 +1,27 @@
+---
+import { clsxm } from '~/utils/helpers';
+import type { HTMLAttributes } from 'astro/types';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export interface Props extends HTMLAttributes<'a'> {
+  href: string;
+  openNewTab?: boolean;
+}
+
+const currentLocale = Astro.currentLocale;
+
+const { href, class: className, openNewTab, ...rest } = Astro.props;
+
+const isNewTab = openNewTab !== undefined ? openNewTab : href && !href.startsWith('/') && !href.startsWith('#');
+
+let hrefLocalized = href;
+if (href.startsWith('/') && currentLocale && (hrefLocalized.split('/')[1] !== currentLocale)) {
+  hrefLocalized = getRelativeLocaleUrl(currentLocale, href).replace(/\/$/, '');
+}
+
+const linkProps = isNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+---
+
+<a href={hrefLocalized} class={clsxm(className)} {...linkProps} {...rest}>
+  <slot />
+</a>

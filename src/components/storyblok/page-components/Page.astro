@@ -1,0 +1,27 @@
+---
+import type { SbBlokData } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+import Layout from '~/layouts/Layout.astro';
+import type { PageStoryblok, StoryblokStory, GlobalSettingsStoryblok, StoryblokComponent as StoryblokComponentType  } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
+
+
+
+export type Props = BlokProps<PageStoryblok> & {
+  globalSettingsStory: StoryblokStory<GlobalSettingsStoryblok>;
+};
+
+const { blok, globalSettingsStory } = Astro.props;
+
+---
+<Layout blok={blok} globalSettingsStory={globalSettingsStory}>
+  <main {...makeEditable(blok)}>
+    {
+      blok.body?.map((nestedBlok: StoryblokComponentType) => {
+        return <StoryblokComponent blok={nestedBlok as SbBlokData} globalSettingsStory={globalSettingsStory} />;
+      })
+    }
+  </main>
+</Layout>
+

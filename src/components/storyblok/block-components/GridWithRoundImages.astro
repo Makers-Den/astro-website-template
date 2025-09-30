@@ -1,0 +1,33 @@
+---
+import Container from "~/components/ui/Container.astro";
+import Typography from "~/components/ui/typography/Typography.astro";
+import RoundedAvatarCard from "./RoundedAvatarCard.astro";
+import type { GridWithRoundImagesStoryblok } from "~/types/storyblok";
+import type { BlokProps } from "~/types/storyblok.custom";
+import { makeEditable } from "~/utils/storyblokRepository/helpers";
+
+type Props = BlokProps<GridWithRoundImagesStoryblok>;
+
+const { blok } = Astro.props;
+
+const { title, description, avatarCards } = blok;
+---
+
+<div class="bg-white" {...makeEditable(blok)}>
+  <Container class="py-12 text-center lg:py-24">
+    <div class="space-y-8 sm:space-y-12">
+      <div class="space-y-5 sm:mx-auto sm:max-w-xl sm:space-y-4 lg:max-w-5xl">
+        <Typography as="h2" variant="h2">{title}</Typography>
+        <Typography as="p" variant="introLarge" class="text-gray-500">{description}</Typography>
+      </div>
+      <ul role="list" class="mx-auto grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 md:gap-x-6 lg:max-w-5xl lg:gap-x-8 lg:gap-y-12 xl:grid-cols-6">
+        {avatarCards?.map((card) => (
+          <li>
+            <RoundedAvatarCard blok={card} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Container>
+</div>
+

@@ -1,0 +1,30 @@
+---
+import Container from "~/components/ui/Container.astro";
+import Typography from "~/components/ui/typography/Typography.astro";
+import type { ThreeColumnCardsStoryblok } from "~/types/storyblok";
+import type { BlokProps } from "~/types/storyblok.custom";
+import ArticleCard from "./ArticleCard.astro";
+
+// Placeholder ArticleCard
+type Props = BlokProps<ThreeColumnCardsStoryblok>;
+const { blok } = Astro.props;
+const { title, description, cards } = blok;
+---
+
+<div class="relative bg-gray-50 px-4 pt-16 pb-20 sm:px-6 lg:px-8 lg:pt-24 lg:pb-28">
+  <div class="absolute inset-0">
+    <div class="h-1/3 bg-white sm:h-2/3" />
+  </div>
+  <Container class="relative  max-w-7xl">
+    <div class="text-center">
+      <Typography as="h2" variant="h2" class="text-primary-900">{title}</Typography>
+      <Typography as="p" variant="introLarge" class="mx-auto mt-3 max-w-2xl  text-primary-700 sm:mt-4">{description}</Typography>
+    </div>
+    <div class="mx-auto mt-12 grid max-w-lg gap-5 lg:max-w-none lg:grid-cols-3">
+      {cards?.map((card) => (
+        card.component === 'ArticleCard' ? <ArticleCard blok={card} /> : "" 
+      ))}
+    </div>
+  </Container>
+</div>
+
