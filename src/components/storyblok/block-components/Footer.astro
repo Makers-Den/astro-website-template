@@ -1,12 +1,12 @@
 ---
-import Container from "~/components/ui/Container.astro";
-import UnstyledLink from "~/components/ui/UnstyledLink.astro";
-import Typography from "~/components/ui/typography/Typography.astro";
-import { clsxm } from "~/utils/helpers";
-import { sbLinkToHref } from "~/utils/storyblokRepository/helpers";
-import type { BlokProps } from "~/types/storyblok.custom";
-import type { FooterStoryblok } from "~/types/storyblok";
-import StoryblokImage from "~/components/ui/StoryblokImage.astro";
+import Container from '~/components/ui/Container.astro';
+import UnstyledLink from '~/components/ui/UnstyledLink.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import { clsxm } from '~/utils/helpers';
+import { sbLinkToHref } from '~/utils/storyblokRepository/helpers';
+import type { BlokProps } from '~/types/storyblok.custom';
+import type { FooterStoryblok } from '~/types/storyblok';
+import StoryblokImage from '~/components/ui/StoryblokImage.astro';
 
 type Props = BlokProps<FooterStoryblok>;
 
@@ -16,124 +16,114 @@ const { logo, description, icons, linkColumns, copyrightText } = blok;
 const socialIcons = icons?.[0]?.logo || [];
 ---
 
-
-    <footer class='bg-white' aria-labelledby='footer-heading'>
-      <h2 id='footer-heading' class='sr-only'>
-        Footer
-      </h2>
-      <Container class=' py-12 lg:py-16 '>
-        <div class='xl:grid xl:grid-cols-3 xl:gap-8'>
-          <div class='space-y-8 xl:col-span-1'>
-            <div class='h-10 w-10'>
-              <StoryblokImage src={logo?.filename} alt={logo?.alt} />
-            </div>
-
-            <Typography as="p" variant="body" class='text-gray-500'>{description}</Typography>
-
-            <div class='flex space-x-6'>
-              {socialIcons.map((icon) => (
-                <StoryblokImage src={icon?.filename} alt={icon?.alt} width={20} />
-              ))}
-            </div>
-          </div>
-          <div class='mt-12 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0'>
-            <div class='md:grid md:grid-cols-2 md:gap-8'>
-              {linkColumns?.[0] && (
-                <div class='mb-12 md:mb-0'>
-                  <Typography as="h6" variant="h6" class='tracking-wider  text-gray-400 md:text-sm lg:text-sm'>
-                    {linkColumns?.[0]?.title}
-                  </Typography>
-                  <ul role='list' class='mt-4 space-y-4'>
-                    {linkColumns?.[0]?.links?.map((item) => {
-                      return (
-                        <li>
-                          <UnstyledLink
-                            href={sbLinkToHref(item.link)}
-                            class={clsxm('block text-gray-500 ')}
-                          >
-                            {item.name}
-                          </UnstyledLink>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-
-              {linkColumns?.[1] && (
-                <div>
-                  <Typography as="h6" variant="h6" class='tracking-wider text-gray-400 md:text-sm lg:text-sm'>
-                    {linkColumns[1].title}
-                  </Typography>
-                  <ul role='list' class='mt-4 space-y-4'>
-                    {linkColumns?.[1]?.links?.map((item) => {
-                      return (
-                        <li>
-                          <UnstyledLink
-                            href={sbLinkToHref(item.link)}
-                            class={clsxm('block text-gray-500')}
-                          >
-                            {item.name}
-                          </UnstyledLink>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-            </div>
-            <div class='md:grid md:grid-cols-2 md:gap-8'>
-              {linkColumns?.[2] && (
-                <div class='mb-12 md:mb-0'>
-                  <Typography as="h6" variant="h6" class='tracking-wider text-gray-400 md:text-sm lg:text-sm'>
-                    {linkColumns?.[2]?.title}
-                  </Typography>
-                  <ul role='list' class='mt-4 space-y-4'>
-                    {linkColumns?.[2]?.links?.map((item) => {
-                      return (
-                        <li >
-                          <UnstyledLink
-                            href={sbLinkToHref(item.link)}
-                            class={clsxm('block text-gray-500')}
-                          >
-                            {item.name}
-                          </UnstyledLink>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-
-              {linkColumns?.[3] && (
-                <div>
-                  <Typography as="h6" variant="h6" class='tracking-wider text-gray-400 md:text-sm lg:text-sm'>
-                    {linkColumns?.[3]?.title}
-                  </Typography>
-                  <ul role='list' class='mt-4 space-y-4'>
-                    {linkColumns?.[3]?.links?.map((item) => {
-                      return (
-                        <li>
-                          <UnstyledLink
-                            href={sbLinkToHref(item.link)}
-                            class={clsxm('block text-gray-500')}
-                          >
-                            {item.name}
-                          </UnstyledLink>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
+<footer class="bg-white" aria-labelledby="footer-heading">
+  <h2 id="footer-heading" class="sr-only">Footer</h2>
+  <Container class="py-12 lg:py-16">
+    <div class="xl:grid xl:grid-cols-3 xl:gap-8">
+      <div class="space-y-8 xl:col-span-1">
+        <div class="h-10 w-10">
+          <StoryblokImage src={logo?.filename} alt={logo?.alt} />
         </div>
-        <div class='mt-12 border-t border-gray-200 pt-8'>
-          <Typography as="p" variant="body" class=' text-gray-400 xl:text-center'>
-            {copyrightText}
-          </Typography>
-        </div>
-      </Container>
-    </footer>
 
+        <Typography as="p" variant="body" class="text-gray-500">{description}</Typography>
+
+        <div class="flex space-x-6">
+          {socialIcons.map((icon) => <StoryblokImage src={icon?.filename} alt={icon?.alt} width={20} />)}
+        </div>
+      </div>
+      <div class="mt-12 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          {
+            linkColumns?.[0] && (
+              <div class="mb-12 md:mb-0">
+                <Typography as="h6" variant="h6" class="tracking-wider  text-gray-400 md:text-sm lg:text-sm">
+                  {linkColumns?.[0]?.title}
+                </Typography>
+                <ul role="list" class="mt-4 space-y-4">
+                  {linkColumns?.[0]?.links?.map((item) => {
+                    return (
+                      <li>
+                        <UnstyledLink href={sbLinkToHref(item.link)} class={clsxm('block text-gray-500 ')}>
+                          {item.name}
+                        </UnstyledLink>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )
+          }
+
+          {
+            linkColumns?.[1] && (
+              <div>
+                <Typography as="h6" variant="h6" class="tracking-wider text-gray-400 md:text-sm lg:text-sm">
+                  {linkColumns[1].title}
+                </Typography>
+                <ul role="list" class="mt-4 space-y-4">
+                  {linkColumns?.[1]?.links?.map((item) => {
+                    return (
+                      <li>
+                        <UnstyledLink href={sbLinkToHref(item.link)} class={clsxm('block text-gray-500')}>
+                          {item.name}
+                        </UnstyledLink>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )
+          }
+        </div>
+        <div class="md:grid md:grid-cols-2 md:gap-8">
+          {
+            linkColumns?.[2] && (
+              <div class="mb-12 md:mb-0">
+                <Typography as="h6" variant="h6" class="tracking-wider text-gray-400 md:text-sm lg:text-sm">
+                  {linkColumns?.[2]?.title}
+                </Typography>
+                <ul role="list" class="mt-4 space-y-4">
+                  {linkColumns?.[2]?.links?.map((item) => {
+                    return (
+                      <li>
+                        <UnstyledLink href={sbLinkToHref(item.link)} class={clsxm('block text-gray-500')}>
+                          {item.name}
+                        </UnstyledLink>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )
+          }
+
+          {
+            linkColumns?.[3] && (
+              <div>
+                <Typography as="h6" variant="h6" class="tracking-wider text-gray-400 md:text-sm lg:text-sm">
+                  {linkColumns?.[3]?.title}
+                </Typography>
+                <ul role="list" class="mt-4 space-y-4">
+                  {linkColumns?.[3]?.links?.map((item) => {
+                    return (
+                      <li>
+                        <UnstyledLink href={sbLinkToHref(item.link)} class={clsxm('block text-gray-500')}>
+                          {item.name}
+                        </UnstyledLink>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </div>
+    <div class="mt-12 border-t border-gray-200 pt-8">
+      <Typography as="p" variant="body" class="text-gray-400 xl:text-center">
+        {copyrightText}
+      </Typography>
+    </div>
+  </Container>
+</footer>

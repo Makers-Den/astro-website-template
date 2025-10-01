@@ -1,9 +1,9 @@
 ---
-import UnstyledLink from "~/components/ui/UnstyledLink.astro";
-import { clsxm } from "~/utils/helpers";
-import { makeEditable, sbLinkToHref } from "~/utils/storyblokRepository/helpers";
-import type { LinkStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
+import UnstyledLink from '~/components/ui/UnstyledLink.astro';
+import { clsxm } from '~/utils/helpers';
+import { makeEditable, sbLinkToHref } from '~/utils/storyblokRepository/helpers';
+import type { LinkStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
 
 type Props = BlokProps<LinkStoryblok> & {
   class?: string;
@@ -15,10 +15,6 @@ const { name, link } = blok;
 const href = sbLinkToHref(link);
 ---
 
-<UnstyledLink
-  href={href}
-  class={clsxm('block font-medium text-gray-500', className)} {...makeEditable(blok)}
->
+<UnstyledLink href={href} class={clsxm('block font-medium text-gray-500', className)} {...makeEditable(blok)}>
   {name}
 </UnstyledLink>
-

@@ -1,6 +1,6 @@
 ---
-import type { StoryblokRichtext } from "~/types/storyblok";
-import RichTextRenderer from "../storyblok/utils/RichTextRenderer.astro";
+import type { StoryblokRichtext } from '~/types/storyblok';
+import RichTextRenderer from '../storyblok/utils/RichTextRenderer.astro';
 
 export interface Props {
   text?: StoryblokRichtext;
@@ -15,25 +15,24 @@ export interface Props {
 const {
   text,
   isSelected = false,
-  name = "switch",
-  id = "switch",
+  name = 'switch',
+  id = 'switch',
   class: className,
   onEventName = 'switchChange',
   setEventName = 'switchSet',
 } = Astro.props as Props;
-
 ---
 
-<div class={['sm:col-span-2', className].filter(Boolean).join(' ')} data-switch-root data-switch-id={id} data-on-event={onEventName} data-set-event={setEventName}>
+<div
+  class={['sm:col-span-2', className].filter(Boolean).join(' ')}
+  data-switch-root
+  data-switch-id={id}
+  data-on-event={onEventName}
+  data-set-event={setEventName}
+>
   <div class="flex items-center">
     <label class="flex items-center cursor-pointer">
-      <input
-        id={id}
-        name={name}
-        type="checkbox"
-        class="peer sr-only"
-        checked={isSelected}
-      />
+      <input id={id} name={name} type="checkbox" class="peer sr-only" checked={isSelected} />
       <div
         class="relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 peer-checked:bg-primary-600 after:pointer-events-none after:absolute after:top-1/2 after:-translate-y-1/2 after:left-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:ring-0 after:transition after:duration-200 after:ease-in-out peer-checked:after:translate-x-5"
         role="switch"
@@ -45,7 +44,6 @@ const {
       {text && <RichTextRenderer content={text} tag="span" className="ml-3 text-base text-gray-500 mb-0 leading-6" />}
     </label>
   </div>
-  
 </div>
 
 <script>
@@ -114,4 +112,3 @@ const {
     cleanup = null;
   });
 </script>
-

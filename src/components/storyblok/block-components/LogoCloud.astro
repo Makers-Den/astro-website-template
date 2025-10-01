@@ -1,10 +1,10 @@
 ---
-import Container from "~/components/ui/Container.astro";
-import StoryblokImage from "~/components/ui/StoryblokImage.astro";
-import VSpacer from "~/components/ui/VSpacer.astro";
-import type { LogoCloudStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
-import { makeEditable } from "~/utils/storyblokRepository/helpers";
+import Container from '~/components/ui/Container.astro';
+import StoryblokImage from '~/components/ui/StoryblokImage.astro';
+import VSpacer from '~/components/ui/VSpacer.astro';
+import type { LogoCloudStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
 
 type Props = BlokProps<LogoCloudStoryblok>;
 
@@ -17,15 +17,16 @@ const { logo: logos, spacingBottom = 'md', spacingTop = 'md' } = blok;
 
   <Container>
     <div class="flex flex-wrap items-center justify-center gap-8">
-      {logos
-        ? logos.map((logo) => (
-            <div class="flex items-center justify-center shrink-0">
-              <StoryblokImage class="h-12 w-auto object-contain" src={logo.filename} alt={logo.alt} />
-            </div>
-          ))
-        : 'Please add logos'}
+      {
+        logos
+          ? logos.map((logo) => (
+              <div class="flex items-center justify-center shrink-0">
+                <StoryblokImage class="h-12 w-auto object-contain" src={logo.filename} alt={logo.alt} />
+              </div>
+            ))
+          : 'Please add logos'
+      }
     </div>
   </Container>
   <VSpacer size={spacingBottom} />
 </div>
-

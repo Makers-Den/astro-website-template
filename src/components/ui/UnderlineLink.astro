@@ -6,19 +6,19 @@ import type { HTMLAttributes } from 'astro/types';
 type Props = HTMLAttributes<'a'> & {
   href: string;
   openNewTab?: boolean;
-}
+};
 
 const { class: className, ...rest } = Astro.props;
 ---
+
 <UnstyledLink
-    {...rest}
-    class={clsxm(
+  {...rest}
+  class={clsxm(
     'animated-underline custom-link inline-flex items-center font-semibold',
     'focus:outline-none focus-visible:rounded focus-visible:ring focus-visible:ring-primary-500 focus-visible:ring-offset-2',
     'border-b border-dotted border-dark hover:border-black/0',
     className
-    )}
+  )}
 >
-<slot />
+  <slot />
 </UnstyledLink>
-

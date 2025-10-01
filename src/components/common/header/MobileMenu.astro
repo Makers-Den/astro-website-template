@@ -1,9 +1,9 @@
 ---
-import NavLinkMobile from "~/components/common/header/blocks/NavLinkMobile.astro";
-import NavSectionMobile from "~/components/common/header/blocks/NavSectionMobile.astro";
-import { clsxm } from "~/utils/helpers";
-import type { NavSectionStoryblok, LinkStoryblok } from "~/types/storyblok";
-import LocaleSwitcher from "../LocaleSwitcher.astro";
+import NavLinkMobile from '~/components/common/header/blocks/NavLinkMobile.astro';
+import NavSectionMobile from '~/components/common/header/blocks/NavSectionMobile.astro';
+import { clsxm } from '~/utils/helpers';
+import type { NavSectionStoryblok, LinkStoryblok } from '~/types/storyblok';
+import LocaleSwitcher from '../LocaleSwitcher.astro';
 
 export interface Props {
   items?: Array<NavSectionStoryblok | LinkStoryblok>;
@@ -15,11 +15,26 @@ const { items = [], halfWidth = false } = Astro.props as Props;
 
 <details class="relative">
   <summary class="inline-flex items-center justify-center focus:ring-2 focus:ring-inset">
-    <svg class="block h-6 w-6 group-open:hidden" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <svg class="hidden h-6 w-6 group-open:block" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg class="block h-6 w-6 group-open:hidden" viewBox="0 0 24 24"
+      ><path
+        d="M4 6h16M4 12h16M4 18h16"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path></svg
+    >
+    <svg class="hidden h-6 w-6 group-open:block" viewBox="0 0 24 24"
+      ><path
+        d="M6 18L18 6M6 6l12 12"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path></svg
+    >
   </summary>
 
-  <div class={clsxm(
+  <div
+    class={clsxm(
       'lg:hidden',
       'fixed left-0 top-[82px] z-20 md:top-[100px]',
       'h-[calc(100vh-82px)]',
@@ -29,19 +44,21 @@ const { items = [], halfWidth = false } = Astro.props as Props;
     data-mobile-menu
   >
     <div class="h-full overflow-scroll overscroll-contain px-10 pt-6 pb-3">
-      {items.map((blok) => {
-        if (blok.component === 'Link') {
-          return <NavLinkMobile blok={blok} />;
-        }
-        if (blok.component === 'NavSection') {
-          return <NavSectionMobile blok={blok} />;
-        }
-        return null;
-      })}
+      {
+        items.map((blok) => {
+          if (blok.component === 'Link') {
+            return <NavLinkMobile blok={blok} />;
+          }
+          if (blok.component === 'NavSection') {
+            return <NavSectionMobile blok={blok} />;
+          }
+          return null;
+        })
+      }
 
-<LocaleSwitcher className='mt-10' />
+      <LocaleSwitcher className="mt-10" />
 
-      <div class="h-4" />
+      <div class="h-4"></div>
     </div>
   </div>
 
@@ -80,4 +97,3 @@ const { items = [], halfWidth = false } = Astro.props as Props;
     });
   </script>
 </details>
-

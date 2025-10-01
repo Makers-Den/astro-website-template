@@ -1,14 +1,14 @@
 ---
-import Container from "~/components/ui/Container.astro";
-import UnstyledLink from "~/components/ui/UnstyledLink.astro";
-import ButtonLink from "~/components/ui/ButtonLink.astro";
-import DesktopMenu from "~/components/common/header/DesktopMenu.astro";
-import MobileMenu from "~/components/common/header/MobileMenu.astro";
-import { clsxm } from "~/utils/helpers";
-import { sbLinkToHref } from "~/utils/storyblokRepository/helpers";
-import type { NavSectionStoryblok, LinkStoryblok } from "~/types/storyblok";
-import SvgIcon from "~/components/ui/SvgIcon.astro";
-import LocaleSwitcher from "../LocaleSwitcher.astro";
+import Container from '~/components/ui/Container.astro';
+import UnstyledLink from '~/components/ui/UnstyledLink.astro';
+import ButtonLink from '~/components/ui/ButtonLink.astro';
+import DesktopMenu from '~/components/common/header/DesktopMenu.astro';
+import MobileMenu from '~/components/common/header/MobileMenu.astro';
+import { clsxm } from '~/utils/helpers';
+import { sbLinkToHref } from '~/utils/storyblokRepository/helpers';
+import type { NavSectionStoryblok, LinkStoryblok } from '~/types/storyblok';
+import SvgIcon from '~/components/ui/SvgIcon.astro';
+import LocaleSwitcher from '../LocaleSwitcher.astro';
 
 export interface Props {
   items?: Array<NavSectionStoryblok | LinkStoryblok>;
@@ -38,26 +38,14 @@ const ctaText = primaryCta?.name || '';
     <div class="flex h-full flex-1 grid-cols-12 items-center gap-4 lg:grid">
       <UnstyledLink
         href="/"
-        class={clsxm(
-          'xs:col-span-5 col-span-3 md:col-span-2',
-          'mr-3',
-          'h-12 w-12',
-          'block'
-        )}
+        class={clsxm('xs:col-span-5 col-span-3 md:col-span-2', 'mr-3', 'h-12 w-12', 'block')}
         aria-label="Home"
       >
         <SvgIcon name="HiCake" class="h-12 w-12 text-primary-600" />
         <span class="sr-only">Home</span>
       </UnstyledLink>
 
-      <div
-        class={clsxm(
-          'h-full',
-          'col-span-10',
-          'hidden lg:flex',
-          'items-center justify-between'
-        )}
-      >
+      <div class={clsxm('h-full', 'col-span-10', 'hidden lg:flex', 'items-center justify-between')}>
         <div class={clsxm('ml-1 h-full gap-6 xl:gap-20', 'hidden lg:flex')}>
           <DesktopMenu items={items} />
         </div>
@@ -65,19 +53,15 @@ const ctaText = primaryCta?.name || '';
     </div>
 
     <div class="flex">
-      {ctaHref && (
-        <ButtonLink
-          class="justify-self-end hidden sm:inline-flex"
-          variant="outline"
-          href={ctaHref}
-          isNavCta={true}
-        >
-          {ctaText}
-        </ButtonLink>
-      )}
+      {
+        ctaHref && (
+          <ButtonLink class="justify-self-end hidden sm:inline-flex" variant="outline" href={ctaHref} isNavCta={true}>
+            {ctaText}
+          </ButtonLink>
+        )
+      }
 
-      <LocaleSwitcher className='hidden lg:block' />
-
+      <LocaleSwitcher className="hidden lg:block" />
 
       <div class="ml-2 flex items-center justify-self-end lg:hidden">
         <MobileMenu items={items} />
@@ -99,11 +83,7 @@ const ctaText = primaryCta?.name || '';
         navEl.style.transform = 'translateY(0px)';
       }
 
-      if (
-        navIsVisible &&
-        currentScrollY > lastScrollY &&
-        currentScrollY > 150
-      ) {
+      if (navIsVisible && currentScrollY > lastScrollY && currentScrollY > 150) {
         navIsVisible = false;
         navEl.style.transform = 'translateY(-150px)';
       }
@@ -124,4 +104,3 @@ const ctaText = primaryCta?.name || '';
     document.addEventListener('astro:before-swap', detach);
   </script>
 </nav>
-

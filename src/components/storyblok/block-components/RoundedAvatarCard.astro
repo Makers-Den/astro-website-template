@@ -11,23 +11,17 @@ const { blok } = Astro.props as Props;
 
 const { image, title, description } = blok;
 ---
-<div class='relative space-y-4' {...makeEditable(blok)}>
-  <div class='relative mx-auto h-20 w-20 lg:h-24 lg:w-24'>
-    <StoryblokImage
-      class='rounded-full'
-      src={image?.filename}
-      alt={image?.alt}
-      fill
-    />
-  </div>  
-  <div class='space-y-2'>
+
+<div class="relative space-y-4" {...makeEditable(blok)}>
+  <div class="relative mx-auto h-20 w-20 lg:h-24 lg:w-24">
+    <StoryblokImage class="rounded-full" src={image?.filename} alt={image?.alt} fill />
+  </div>
+  <div class="space-y-2">
     <div>
       <Typography as="h4" variant="h4" class="text-primary-900 md:text-sm lg:text-sm">{title}</Typography>
-      <Typography as="p" variant="bodySmall" class="break-words font-medium text-primary-600 ">
+      <Typography as="p" variant="bodySmall" class="break-words font-medium text-primary-600">
         {description}
       </Typography>
     </div>
   </div>
 </div>
-
-

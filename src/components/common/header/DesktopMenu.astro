@@ -1,7 +1,7 @@
 ---
-import NavLinkDesktop from "~/components/common/header/blocks/NavLinkDesktop.astro";
-import NavSectionDesktop from "~/components/common/header/blocks/NavSectionDesktop.astro";
-import type { NavSectionStoryblok, LinkStoryblok } from "~/types/storyblok";
+import NavLinkDesktop from '~/components/common/header/blocks/NavLinkDesktop.astro';
+import NavSectionDesktop from '~/components/common/header/blocks/NavSectionDesktop.astro';
+import type { NavSectionStoryblok, LinkStoryblok } from '~/types/storyblok';
 
 export interface Props {
   items?: Array<NavSectionStoryblok | LinkStoryblok>;
@@ -11,14 +11,15 @@ const { items = [] } = Astro.props as Props;
 ---
 
 <Fragment>
-  {items.map((blok) => {
-    if (blok.component === 'Link') {
-      return <NavLinkDesktop blok={blok} />;
-    }
-    if (blok.component === 'NavSection') {
-      return <NavSectionDesktop blok={blok} />;
-    }
-    return null;
-  })}
+  {
+    items.map((blok) => {
+      if (blok.component === 'Link') {
+        return <NavLinkDesktop blok={blok} />;
+      }
+      if (blok.component === 'NavSection') {
+        return <NavSectionDesktop blok={blok} />;
+      }
+      return null;
+    })
+  }
 </Fragment>
-

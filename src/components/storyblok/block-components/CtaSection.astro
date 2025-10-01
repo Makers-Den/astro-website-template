@@ -1,11 +1,11 @@
 ---
-import Container from "~/components/ui/Container.astro";
-import VSpacer from "~/components/ui/VSpacer.astro";
-import Typography from "~/components/ui/typography/Typography.astro";
-import CtaLink from "./CtaLink.astro";
-import type { CtaSectionStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
-import { makeEditable } from "~/utils/storyblokRepository/helpers";
+import Container from '~/components/ui/Container.astro';
+import VSpacer from '~/components/ui/VSpacer.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import CtaLink from './CtaLink.astro';
+import type { CtaSectionStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
 
 type Props = BlokProps<CtaSectionStoryblok>;
 
@@ -14,14 +14,17 @@ const { title, ctaLink } = blok;
 ---
 
 <div class="bg-primary-50" {...makeEditable(blok)}>
-  <Container class='flex flex-col items-center justify-center'>
-    <VSpacer size='lg' />
-    {title && <Typography as="h3" variant="h3" class="text-center">{title}</Typography>}
-    <VSpacer size='xs' />
-    {ctaLink.map((linkContent) => (
-      <CtaLink blok={linkContent} />
-    ))}
-    <VSpacer size='lg' />
+  <Container class="flex flex-col items-center justify-center">
+    <VSpacer size="lg" />
+    {
+      title && (
+        <Typography as="h3" variant="h3" class="text-center">
+          {title}
+        </Typography>
+      )
+    }
+    <VSpacer size="xs" />
+    {ctaLink.map((linkContent) => <CtaLink blok={linkContent} />)}
+    <VSpacer size="lg" />
   </Container>
 </div>
-

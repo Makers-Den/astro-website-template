@@ -1,5 +1,5 @@
 import slugify from 'limax';
-
+import { PUBLIC_SITE_URL } from 'astro:env/server';
 
 import { trim } from '~/utils/helpers';
 
@@ -20,18 +20,18 @@ export const cleanSlug = (text = '') =>
     .map((slug) => slugify(slug))
     .join('/');
 
-export const BLOG_BASE = cleanSlug("blog");
-export const CATEGORY_BASE = cleanSlug("category");
-export const TAG_BASE = cleanSlug("tag");
+export const BLOG_BASE = cleanSlug('blog');
+export const CATEGORY_BASE = cleanSlug('category');
+export const TAG_BASE = cleanSlug('tag');
 
 export const POST_PERMALINK_PATTERN = trimSlash(`${BLOG_BASE}/%slug%`);
 
 /** */
 export const getCanonical = (path = ''): string => {
-  const url = String(new URL(path, "https://example.com"));
+  const url = String(new URL(path, PUBLIC_SITE_URL));
   if (path && url.endsWith('/')) {
     return url.slice(0, -1);
-  } 
+  }
   return url;
 };
 

@@ -1,10 +1,10 @@
 ---
-import NavLinkMobile from "~/components/common/header/blocks/NavLinkMobile.astro";
-import Typography from "~/components/ui/typography/Typography.astro";
-import type { NavSectionStoryblok } from "~/types/storyblok";
-import { makeEditable } from "~/utils/storyblokRepository/helpers";
-import type { BlokProps } from "~/types/storyblok.custom";
-import SvgIcon from "~/components/ui/SvgIcon.astro";
+import NavLinkMobile from '~/components/common/header/blocks/NavLinkMobile.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import type { NavSectionStoryblok } from '~/types/storyblok';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
+import type { BlokProps } from '~/types/storyblok.custom';
+import SvgIcon from '~/components/ui/SvgIcon.astro';
 
 type Props = BlokProps<NavSectionStoryblok>;
 
@@ -16,20 +16,22 @@ const { name, links } = blok;
 <div class="w-full" {...makeEditable(blok)}>
   <details class="group">
     <summary class="w-full cursor-pointer list-none select-none">
-      <Typography class="flex items-center font-medium text-gray-500 relative z-10">{name}
+      <Typography class="flex items-center font-medium text-gray-500 relative z-10"
+        >{name}
         <SvgIcon name="ChevronRight" class="ml-2 w-6 group-open:hidden" />
         <SvgIcon name="ChevronDown" class="ml-2 w-6 hidden group-open:block" />
       </Typography>
     </summary>
 
     <div class="pl-3">
-      {links?.map((link) => (
-        <div class="py-2">
-          <NavLinkMobile blok={link} />
-        </div>
-      ))}
-      <div class="h-4" />
+      {
+        links?.map((link) => (
+          <div class="py-2">
+            <NavLinkMobile blok={link} />
+          </div>
+        ))
+      }
+      <div class="h-4"></div>
     </div>
   </details>
 </div>
-

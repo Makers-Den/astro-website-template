@@ -1,17 +1,11 @@
 ---
-import { clsxm } from "~/utils/helpers";
-import { variantToClasses, type TypographyProps } from "./Typography.types.ts";
-import Balancer from "./Balancer.astro";
+import { clsxm } from '~/utils/helpers';
+import { variantToClasses, type TypographyProps } from './Typography.types.ts';
+import Balancer from './Balancer.astro';
 
 export type Props = TypographyProps;
 
-const {
-  variant = "text",
-  as = "p",
-  class: className,
-  balance = false,
-  ...rest
-} = Astro.props;
+const { variant = 'text', as = 'p', class: className, balance = false, ...rest } = Astro.props;
 
 const Element = as;
 const classes = clsxm(variantToClasses[variant], className);

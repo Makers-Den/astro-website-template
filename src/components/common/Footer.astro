@@ -1,13 +1,13 @@
 ---
-import Container from "~/components/ui/Container.astro";
-import UnstyledLink from "~/components/ui/UnstyledLink.astro";
-import Spacer from "~/components/ui/Spacer.astro";
-import Typography from "~/components/ui/typography/Typography.astro";
-import { clsxm } from "~/utils/helpers";
-import { sbLinkToHref } from "~/utils/storyblokRepository/helpers";
-import type { StoryblokMultilink } from "~/types/storyblok.custom";
-import type { NavSectionStoryblok, LinkStoryblok } from "~/types/storyblok";
-import SvgIcon from "../ui/SvgIcon.astro";
+import Container from '~/components/ui/Container.astro';
+import UnstyledLink from '~/components/ui/UnstyledLink.astro';
+import Spacer from '~/components/ui/Spacer.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import { clsxm } from '~/utils/helpers';
+import { sbLinkToHref } from '~/utils/storyblokRepository/helpers';
+import type { StoryblokMultilink } from '~/types/storyblok.custom';
+import type { NavSectionStoryblok, LinkStoryblok } from '~/types/storyblok';
+import SvgIcon from '../ui/SvgIcon.astro';
 
 export interface Props {
   sections?: NavSectionStoryblok[];
@@ -23,45 +23,49 @@ const currentYear = new Date().getFullYear();
     <div class="w-full max-w-[390px] lg:max-w-none">
       <!-- Desktop grid -->
       <div class="hidden justify-between gap-x-10 gap-y-4 lg:grid lg:auto-cols-[9rem]">
-        {sections.map(({ name, links }) => (
-          <>
-            <Typography as="h3" variant="introLarge" class="row-start-1 row-end-2 text-white md:leading-tight">
-              {name}
-            </Typography>
-            <ul>
-              {(links || []).map(({ name, link }) => (
-                <Typography as="li" variant="note" class="mb-2 text-white">
-                  <UnstyledLink href={sbLinkToHref(link as StoryblokMultilink)}>{name}</UnstyledLink>
-                </Typography>
-              ))}
-            </ul>
-          </>
-        ))}
+        {
+          sections.map(({ name, links }) => (
+            <>
+              <Typography as="h3" variant="introLarge" class="row-start-1 row-end-2 text-white md:leading-tight">
+                {name}
+              </Typography>
+              <ul>
+                {(links || []).map(({ name, link }) => (
+                  <Typography as="li" variant="note" class="mb-2 text-white">
+                    <UnstyledLink href={sbLinkToHref(link as StoryblokMultilink)}>{name}</UnstyledLink>
+                  </Typography>
+                ))}
+              </ul>
+            </>
+          ))
+        }
       </div>
 
       <!-- Mobile accordions -->
-      {sections.map(({ links, name }, index) => (
-        <div class="block w-full lg:hidden">
-          {index !== 0 && <Spacer className="h-8" />}
-          <details class="group">
-            <summary class="flex w-full max-w-[14rem] list-none items-center justify-between cursor-pointer">
-              <Typography as="h3" variant="h3" class={clsxm('max-w-[13.5rem] text-left text-white')}>
-                {name}
-              </Typography>
-              <SvgIcon name="ChevronRight" class="chevron h-5 w-5 text-white transition-transform" />
-            </summary>
-            <Spacer className="h-4" />
-            <ul>
-              {(links || []).map(({ name, link, _uid }, linkIndex) => (
-                <Typography as="li" variant="note" class="text-white" key={_uid}>
-                  {linkIndex !== 0 && <Spacer className="h-1" />}
-                  <UnstyledLink href={sbLinkToHref(link as StoryblokMultilink)}>{name}</UnstyledLink>
+      {
+        sections.map(({ links, name }, index) => (
+          <div class="block w-full lg:hidden">
+            {index !== 0 && <Spacer className="h-8" />}
+            <details class="group">
+              <summary class="flex w-full max-w-[14rem] list-none items-center justify-between cursor-pointer">
+                <Typography as="h3" variant="h3" class={clsxm('max-w-[13.5rem] text-left text-white')}>
+                  {name}
                 </Typography>
-              ))}
-            </ul>
-          </details>
-        </div>
-      ))}
+                <SvgIcon name="ChevronRight" class="chevron h-5 w-5 text-white transition-transform" />
+              </summary>
+              <Spacer className="h-4" />
+              <ul>
+                {(links || []).map(({ name, link, _uid }, linkIndex) => (
+                  <Typography as="li" variant="note" class="text-white" key={_uid}>
+                    {linkIndex !== 0 && <Spacer className="h-1" />}
+                    <UnstyledLink href={sbLinkToHref(link as StoryblokMultilink)}>{name}</UnstyledLink>
+                  </Typography>
+                ))}
+              </ul>
+            </details>
+          </div>
+        ))
+      }
 
       <Spacer className="h-10 lg:hidden" />
       <ul class="flex flex-row flex-wrap">
@@ -70,20 +74,22 @@ const currentYear = new Date().getFullYear();
           <span class="hidden lg:inline">|</span>
         </Typography>
 
-        {bottomLinks.map(({ _uid, name, link }, index) => {
-          const isNotFirst = index !== 0;
-          return (
-            <Typography key={_uid} as="li" variant="note" class="flex text-sm text-white">
-              {isNotFirst && '|'}
-              <UnstyledLink
-                href={sbLinkToHref(link as StoryblokMultilink)}
-                class={clsxm('mr-2 block', isNotFirst ? 'ml-2' : 'lg:ml-2')}
-              >
-                {name}
-              </UnstyledLink>
-            </Typography>
-          );
-        })}
+        {
+          bottomLinks.map(({ _uid, name, link }, index) => {
+            const isNotFirst = index !== 0;
+            return (
+              <Typography key={_uid} as="li" variant="note" class="flex text-sm text-white">
+                {isNotFirst && '|'}
+                <UnstyledLink
+                  href={sbLinkToHref(link as StoryblokMultilink)}
+                  class={clsxm('mr-2 block', isNotFirst ? 'ml-2' : 'lg:ml-2')}
+                >
+                  {name}
+                </UnstyledLink>
+              </Typography>
+            );
+          })
+        }
       </ul>
     </div>
   </Container>
@@ -94,4 +100,3 @@ const currentYear = new Date().getFullYear();
     }
   </style>
 </footer>
-

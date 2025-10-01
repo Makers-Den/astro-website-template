@@ -1,14 +1,14 @@
 ---
-import RichTextRenderer from "~/components/storyblok/utils/RichTextRenderer.astro";
-import SvgIcon from "~/components/ui/SvgIcon.astro";
-import type { FeatureGridItemStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
-import { makeEditable } from "~/utils/storyblokRepository/helpers";
+import RichTextRenderer from '~/components/storyblok/utils/RichTextRenderer.astro';
+import SvgIcon from '~/components/ui/SvgIcon.astro';
+import type { FeatureGridItemStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
 
 type Props = BlokProps<FeatureGridItemStoryblok>;
 const { blok } = Astro.props;
 const { title, icon, description } = blok;
-console.log(icon)
+console.log(icon);
 ---
 
 <div class="pt-6" {...makeEditable(blok)}>
@@ -26,4 +26,3 @@ console.log(icon)
     </div>
   </div>
 </div>
-

@@ -4,15 +4,15 @@ import type { GlobalSettingsStoryblok } from '~/types/storyblok';
 import { isRichtextNotEmpty, richtextToString } from '~/utils/richtext';
 import type { StoryblokPageComponent } from '~/types/storyblok.custom';
 import type { StoryblokStory } from '~/types/storyblok';
+import { PUBLIC_SITE_URL } from 'astro:env/server';
 
 const defaultMeta = {
-  title: "Astro Website Template",
-  siteName: "Astro Website Template",
-  description:
-    "Astro Website Template",
-  url: 'https://astro-website-template.com',
+  title: 'Astro Website Template',
+  siteName: 'Astro Website Template',
+  description: 'Astro Website Template',
+  url: PUBLIC_SITE_URL,
   type: 'website',
-  robots: 'follow, index',
+  robots: 'noindex, nofollow',
 } as const;
 
 interface GenerateMetadataParams {

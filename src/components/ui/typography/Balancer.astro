@@ -1,5 +1,5 @@
 ---
-import type { TypographyProps } from "./Typography.types";
+import type { TypographyProps } from './Typography.types';
 
 export type Props = TypographyProps;
 
@@ -15,11 +15,11 @@ const balancerId = `balancer-${Math.random().toString(36).slice(2, 10)}`;
     if (!container) return;
 
     const update = function (width) {
-      wrapper.style.maxWidth = width + "px";
+      wrapper.style.maxWidth = width + 'px';
     };
 
     // Reset wrapper width
-    wrapper.style.maxWidth = "";
+    wrapper.style.maxWidth = '';
 
     // Get the initial container size
     const width = container.clientWidth;
@@ -46,7 +46,7 @@ const balancerId = `balancer-${Math.random().toString(36).slice(2, 10)}`;
       update(upper);
     }
   }
-  window["balance"] = balance;
+  window['balance'] = balance;
 </script>
 <script is:inline define:vars={{ balancerId }}>
   (function () {
@@ -58,7 +58,7 @@ const balancerId = `balancer-${Math.random().toString(36).slice(2, 10)}`;
       const el = document.querySelector(`[data-balancer-id="${balancerId}"]`);
       if (!el) return;
 
-      if (typeof window.balance !== "function") return;
+      if (typeof window.balance !== 'function') return;
 
       if (el._balancerObserver) {
         el._balancerObserver.disconnect();
@@ -68,23 +68,23 @@ const balancerId = `balancer-${Math.random().toString(36).slice(2, 10)}`;
       window.balance(el);
       balancerInitialized = true;
 
-      if (typeof ResizeObserver === "undefined") return;
+      if (typeof ResizeObserver === 'undefined') return;
 
       const container = el.parentElement;
 
       if (container) {
         el._balancerObserver = new ResizeObserver(() => {
-          if (typeof window.balance === "function") window.balance(el);
+          if (typeof window.balance === 'function') window.balance(el);
         }).observe(container);
       }
     };
 
     // Listen for both page load events
-    document.addEventListener("astro:page-load", initBalancer);
+    document.addEventListener('astro:page-load', initBalancer);
 
     // Listen for window load as a fallback
-    if (document.readyState === "loading") {
-      window.addEventListener("load", initBalancer);
+    if (document.readyState === 'loading') {
+      window.addEventListener('load', initBalancer);
     } else {
       initBalancer();
     }

@@ -1,7 +1,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { defineConfig, envField } from 'astro/config';
+import { defineConfig, envField, passthroughImageService } from 'astro/config';
 
 import tailwind from '@astrojs/tailwind';
 import icon from 'astro-icon';
@@ -14,13 +14,14 @@ import mkcert from 'vite-plugin-mkcert';
 
 import { loadEnv } from 'vite';
 
-const env = loadEnv('', process.cwd(), 'STORYBLOK');
+const env = loadEnv('', process.cwd(), '');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   output: 'server',
   adapter: cloudflare({
+    imageService: 'cloudflare',
     platformProxy: {
       enabled: true,
     },
@@ -37,27 +38,24 @@ export default defineConfig({
       STORYBLOK_TOKEN: envField.string({ context: 'server', access: 'secret' }),
       STORYBLOK_VERSION: envField.string({ context: 'client', access: 'public' }),
       PREVIEW_SECRET: envField.string({ context: 'server', access: 'secret' }),
-      YOUTUBE_API_KEY: envField.string({ context: 'server', access: 'secret' }),
-      POSTMARK_API_TOKEN: envField.string({ context: 'server', access: 'secret' }),
       COOKIE_CONSENT_ENABLED: envField.string({ context: 'server', access: 'public' }),
       PUBLIC_STAPE_URL: envField.string({ context: 'server', access: 'public' }),
       PUBLIC_STAPE_GTM_SCRIPT_LINK: envField.string({ context: 'server', access: 'public' }),
       PUBLIC_STAPE_GTM_SCRIPT_ARG: envField.string({ context: 'server', access: 'public' }),
-      INTERNAL_API_KEY: envField.string({ context: 'server', access: 'secret' }),
       STORYBLOK_MANAGEMENT_TOKEN: envField.string({ context: 'server', access: 'secret' }),
       STORYBLOK_SPACE_ID: envField.string({ context: 'server', access: 'public' }),
       STORYBLOK_WEBHOOK_SECRET: envField.string({ context: 'server', access: 'secret' }),
-      SLACK_TOKEN: envField.string({ context: 'server', access: 'secret' }),
       CLOUDFLARE_ZONE_ID: envField.string({ context: 'server', access: 'public' }),
       CLOUDFLARE_API_KEY: envField.string({ context: 'server', access: 'secret' }),
       PUBLIC_GTM_ID: envField.string({ context: 'server', access: 'public' }),
+      PUBLIC_SITE_URL: envField.string({ context: 'server', access: 'public' }),
     },
     validateSecrets: true,
   },
-  site: 'https://makersden.io',
+  site: env.PUBLIC_SITE_URL,
   i18n: {
     defaultLocale: 'en',
-    locales: ['en','de', 'he'],
+    locales: ['en', 'de', 'he'],
   },
   experimental: {
     fonts: [
@@ -139,7 +137,7 @@ export default defineConfig({
 
   image: {
     domains: ['a.storyblok.com'],
-    service: { entrypoint: 'astro/assets/services/sharp' },
+    service: passthroughImageService(),
   },
   vite: {
     resolve: {

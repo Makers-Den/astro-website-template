@@ -3,7 +3,7 @@ User-agent: *
 Disallow: /
 
 # Host
-Host: https://makersden.io
+Host: https://template.makersden.dev/
 
 # Sitemaps
-Sitemap: https://makersden.io/sitemap.xml
+Sitemap: https://template.makersden.dev/sitemap.xml

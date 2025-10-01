@@ -1,14 +1,14 @@
 ---
-import VSpacer from "~/components/ui/VSpacer.astro";
-import type { FeatureGridStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
-import FeatureGridItem from "./FeatureGridItem.astro";
-import { makeEditable } from "~/utils/storyblokRepository/helpers";
+import VSpacer from '~/components/ui/VSpacer.astro';
+import type { FeatureGridStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import FeatureGridItem from './FeatureGridItem.astro';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
 
 type Props = BlokProps<FeatureGridStoryblok>;
 
 const { blok } = Astro.props;
-const { headline, tagline, description, features, spacingBottom='md', spacingTop='md' } = blok;
+const { headline, tagline, description, features, spacingBottom = 'md', spacingTop = 'md' } = blok;
 ---
 
 <div class="relative bg-white" {...makeEditable(blok)}>
@@ -22,12 +22,9 @@ const { headline, tagline, description, features, spacingBottom='md', spacingTop
     </div>
     <div class="mt-12">
       <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {features?.map((featureBlok) => (
-          <FeatureGridItem blok={featureBlok} />
-        ))}
+        {features?.map((featureBlok) => <FeatureGridItem blok={featureBlok} />)}
       </div>
     </div>
   </div>
   <VSpacer size={spacingBottom} />
 </div>
-

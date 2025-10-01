@@ -1,8 +1,8 @@
 ---
-import ButtonLink from "~/components/ui/ButtonLink.astro";
-import type { LinkStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
-import { makeEditable, sbLinkToHref } from "~/utils/storyblokRepository/helpers";
+import ButtonLink from '~/components/ui/ButtonLink.astro';
+import type { LinkStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import { makeEditable, sbLinkToHref } from '~/utils/storyblokRepository/helpers';
 
 type Props = BlokProps<LinkStoryblok>;
 
@@ -12,4 +12,3 @@ const href = sbLinkToHref(link);
 ---
 
 <ButtonLink href={href} {...makeEditable(blok)}>{name || ''}</ButtonLink>
-

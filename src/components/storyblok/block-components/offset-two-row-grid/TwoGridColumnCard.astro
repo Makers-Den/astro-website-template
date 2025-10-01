@@ -1,9 +1,9 @@
 ---
-import StoryblokImage from "~/components/ui/StoryblokImage.astro";
-import Typography from "~/components/ui/typography/Typography.astro";
-import type { TwoGridColumnCardStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
-import { makeEditable } from "~/utils/storyblokRepository/helpers";
+import StoryblokImage from '~/components/ui/StoryblokImage.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import type { TwoGridColumnCardStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
 
 type Props = BlokProps<TwoGridColumnCardStoryblok>;
 
@@ -12,15 +12,17 @@ const { asset, title, description } = blok;
 ---
 
 <div class="relative space-y-4" {...makeEditable(blok)}>
-  {asset?.filename?.slice(-3) === 'svg' ? (
-    <span class="inline-flex items-center justify-center rounded-md bg-primary-800 p-3 shadow-lg">
-      <StoryblokImage class="h-6 w-6 text-white" src={asset.filename} alt={asset.alt} fill />
-    </span>
-  ) : (
-    <div class="relative mx-auto aspect-[16/9] ">
-      <StoryblokImage src={asset?.filename} alt={asset?.alt} class="object-cover object-center" fill/>
-    </div>
-  )}
+  {
+    asset?.filename?.slice(-3) === 'svg' ? (
+      <span class="inline-flex items-center justify-center rounded-md bg-primary-800 p-3 shadow-lg">
+        <StoryblokImage class="h-6 w-6 text-white" src={asset.filename} alt={asset.alt} fill />
+      </span>
+    ) : (
+      <div class="relative mx-auto aspect-[16/9] ">
+        <StoryblokImage src={asset?.filename} alt={asset?.alt} class="object-cover object-center" fill />
+      </div>
+    )
+  }
   <div class="space-y-2">
     <div class="space-y-2">
       <Typography as="h5" variant="h5" class="text-primary-900">{title}</Typography>
@@ -28,4 +30,3 @@ const { asset, title, description } = blok;
     </div>
   </div>
 </div>
-

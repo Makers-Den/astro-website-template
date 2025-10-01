@@ -20,7 +20,7 @@ export default {
       fontFamily: {
         // Add your custom fonts using CSS variables
         primary: ['var(--font-inter)', 'var(--aw-font-sans, ui-sans-serif)', ...defaultTheme.fontFamily.sans],
-     },
+      },
 
       // Enhanced screen breakpoints
       screens: {
@@ -53,9 +53,6 @@ export default {
           900: withOpacityValue('--tw-color-primary-900'),
         },
         dark: '#222222',
-
-
-        
 
         // Semantic colors for better UX
         surface: {

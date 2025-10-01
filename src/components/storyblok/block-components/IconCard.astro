@@ -8,25 +8,20 @@ import { makeEditable } from '~/utils/storyblokRepository/helpers';
 export type Props = BlokProps<OffsetIconCardStoryblok>;
 const { blok } = Astro.props;
 const { title, description, icon } = blok;
-
 ---
-<div class='w-[374px] pt-6' {...makeEditable(blok)}>
-  <div class='flow-root rounded-lg bg-primary-100 px-6 pb-8'>
-    <div class='-mt-6'>
+
+<div class="w-[374px] pt-6" {...makeEditable(blok)}>
+  <div class="flow-root rounded-lg bg-primary-100 px-6 pb-8">
+    <div class="-mt-6">
       <div>
-        <span class='inline-flex items-center justify-center rounded-md bg-primary-800 p-3 shadow-lg'>
-          <StoryblokImage
-            class='h-6 w-6 text-white'
-            src={icon?.filename}
-            alt={icon?.alt}
-            fill
-          />
+        <span class="inline-flex items-center justify-center rounded-md bg-primary-800 p-3 shadow-lg">
+          <StoryblokImage class="h-6 w-6 text-white" src={icon?.filename} alt={icon?.alt} fill />
         </span>
       </div>
-      <Typography as='h3' variant='h5' class='mt-8 text-primary-900'>
+      <Typography as="h3" variant="h5" class="mt-8 text-primary-900">
         {title || 'Fill a icon card title'}
       </Typography>
-      <Typography as='p' variant='body' class='mt-5 text-base text-primary-700'>
+      <Typography as="p" variant="body" class="mt-5 text-base text-primary-700">
         {description || 'Fill a icon card description'}
       </Typography>
     </div>

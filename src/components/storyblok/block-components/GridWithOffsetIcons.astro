@@ -1,10 +1,10 @@
 ---
-import Container from "~/components/ui/Container.astro";
-import Typography from "~/components/ui/typography/Typography.astro";
-import type { GridWithOffsetIconsStoryblok, OffsetIconCardStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
-import IconCard from "./IconCard.astro";
-import { makeEditable } from "~/utils/storyblokRepository/helpers";
+import Container from '~/components/ui/Container.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import type { GridWithOffsetIconsStoryblok, OffsetIconCardStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import IconCard from './IconCard.astro';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
 
 type Props = BlokProps<GridWithOffsetIconsStoryblok>;
 
@@ -13,17 +13,16 @@ const { title, subtitle, description, iconCards } = blok;
 ---
 
 <div class="relative bg-white py-16 sm:py-24 lg:py-32" {...makeEditable(blok)}>
-  <Container class="max-w-md text-center sm:max-w-3xl  lg:max-w-7xl ">
+  <Container class="max-w-md text-center sm:max-w-3xl lg:max-w-7xl">
     <Typography as="h3" variant="eyebrow">{title || 'Fill a title'}</Typography>
-    <Typography as="p" variant="h2" class="mt-2 text-primary-900 ">{subtitle || 'Fill a subtitle'}</Typography>
-    <Typography as="p" variant="introLarge" class="mx-auto mt-5 max-w-prose text-primary-700">{description || 'Fill a description'}</Typography>
+    <Typography as="p" variant="h2" class="mt-2 text-primary-900">{subtitle || 'Fill a subtitle'}</Typography>
+    <Typography as="p" variant="introLarge" class="mx-auto mt-5 max-w-prose text-primary-700"
+      >{description || 'Fill a description'}</Typography
+    >
     <div class="mt-12">
-      <div class="flex flex-wrap justify-center gap-8 ">
-        {iconCards?.map((card) => (
-          <IconCard blok={card as OffsetIconCardStoryblok} />
-        ))}
+      <div class="flex flex-wrap justify-center gap-8">
+        {iconCards?.map((card) => <IconCard blok={card as OffsetIconCardStoryblok} />)}
       </div>
     </div>
   </Container>
 </div>
-

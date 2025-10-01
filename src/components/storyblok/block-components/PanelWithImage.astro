@@ -1,11 +1,11 @@
 ---
-import Container from "~/components/ui/Container.astro";
-import StoryblokImage from "~/components/ui/StoryblokImage.astro";
-import ButtonLink from "~/components/ui/ButtonLink.astro";
-import Typography from "~/components/ui/typography/Typography.astro";
-import { makeEditable, sbLinkToHref } from "~/utils/storyblokRepository/helpers";
-import type { PanelWithImageStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
+import Container from '~/components/ui/Container.astro';
+import StoryblokImage from '~/components/ui/StoryblokImage.astro';
+import ButtonLink from '~/components/ui/ButtonLink.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import { makeEditable, sbLinkToHref } from '~/utils/storyblokRepository/helpers';
+import type { PanelWithImageStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
 
 type Props = BlokProps<PanelWithImageStoryblok>;
 
@@ -25,13 +25,24 @@ const { topHeader, bottomHeader, description, image, link } = blok;
           <Typography as="p" variant="intro" class="mt-4 text-primary-200">
             {description}
           </Typography>
-          {link?.map((linkContent) => (
-            <ButtonLink class="mt-8" href={sbLinkToHref(linkContent.link)}>{linkContent.name}</ButtonLink>
-          ))}
+          {
+            link?.map((linkContent) => (
+              <ButtonLink class="mt-8" href={sbLinkToHref(linkContent.link)}>
+                {linkContent.name}
+              </ButtonLink>
+            ))
+          }
         </div>
       </div>
-      <div class="relative -mt-6  aspect-[5/3] h-full translate-x-6 translate-y-6 sm:translate-x-16  md:aspect-[2/1] lg:translate-y-20">
-        <StoryblokImage fill class="transform rounded-md object-cover object-center" src={image?.filename} alt={image?.alt} />
+      <div
+        class="relative -mt-6 aspect-[5/3] h-full translate-x-6 translate-y-6 sm:translate-x-16 md:aspect-[2/1] lg:translate-y-20"
+      >
+        <StoryblokImage
+          fill
+          class="transform rounded-md object-cover object-center"
+          src={image?.filename}
+          alt={image?.alt}
+        />
       </div>
     </div>
   </Container>

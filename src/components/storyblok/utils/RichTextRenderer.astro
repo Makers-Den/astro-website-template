@@ -1,27 +1,20 @@
 ---
-import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
-import Typography from "~/components/ui/typography/Typography.astro";
-import { clsxm } from "~/utils/helpers";
-import { sentenceToId } from "~/utils/richtext";
-import { sbLinkToHref } from "~/utils/storyblokRepository/helpers";
-import type {
-  ComponentNode,
-  RichTextType,
-  Schema,
-} from "storyblok-rich-text-astro-renderer";
-import type { Resolver } from "storyblok-rich-text-astro-renderer";
-import type { SbBlokData } from "@storyblok/astro";
-import {
-  resolveRichTextToNodes,
-  type Image,
-} from "storyblok-rich-text-astro-renderer";
-import type { MarkNode } from "@storyblok/richtext";
-import type { TypographyVariant } from "~/components/ui/typography/Typography.types";
-import ButtonLink from "~/components/ui/ButtonLink.astro";
-import type { StoryblokMultilink } from "~/types/storyblok.custom";
-import CodeBlock from "~/components/ui/CodeBlock.astro";
-import type { StoryblokRichtext } from "~/types/storyblok";
-import UnderlineLink from "~/components/ui/UnderlineLink.astro";
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import { clsxm } from '~/utils/helpers';
+import { sentenceToId } from '~/utils/richtext';
+import { sbLinkToHref } from '~/utils/storyblokRepository/helpers';
+import type { ComponentNode, RichTextType, Schema } from 'storyblok-rich-text-astro-renderer';
+import type { Resolver } from 'storyblok-rich-text-astro-renderer';
+import type { SbBlokData } from '@storyblok/astro';
+import { resolveRichTextToNodes, type Image } from 'storyblok-rich-text-astro-renderer';
+import type { MarkNode } from '@storyblok/richtext';
+import type { TypographyVariant } from '~/components/ui/typography/Typography.types';
+import ButtonLink from '~/components/ui/ButtonLink.astro';
+import type { StoryblokMultilink } from '~/types/storyblok.custom';
+import CodeBlock from '~/components/ui/CodeBlock.astro';
+import type { StoryblokRichtext } from '~/types/storyblok';
+import UnderlineLink from '~/components/ui/UnderlineLink.astro';
 
 export interface Props {
   content?: StoryblokRichtext;
@@ -30,23 +23,16 @@ export interface Props {
   tag?: string;
 }
 
-const {
-  content,
-  variant = "body",
-  className,
-  tag: optionTag,
-} = Astro.props as Props;
+const { content, variant = 'body', className, tag: optionTag } = Astro.props as Props;
 
 // Function handles empty paragraphs rendering
-function normalizeRichTextContent(
-  input?: StoryblokRichtext
-): StoryblokRichtext | undefined {
-  if (!input || typeof input !== "object") return input;
+function normalizeRichTextContent(input?: StoryblokRichtext): StoryblokRichtext | undefined {
+  if (!input || typeof input !== 'object') return input;
 
   const normalizeNode = (node: StoryblokRichtext): StoryblokRichtext => {
-    if (!node || typeof node !== "object") return node;
+    if (!node || typeof node !== 'object') return node;
 
-    if (node.type === "paragraph" && node.content == null) {
+    if (node.type === 'paragraph' && node.content == null) {
       node = { ...node, content: [] };
     }
 
@@ -67,22 +53,20 @@ function normalizeRichTextContent(
 const normalizedContent = normalizeRichTextContent(content);
 
 const styledClasses: Record<string, string> = {
-  subscript: "subscript",
-  superscript: "superscript",
-  highlightBox:
-    "border-grey-400 bg-grey-200 text-grey-900 block rounded-sm border p-3 font-bold",
-  quoteRight:
-    "mb-4 text-center text-3xl font-bold md:float-right md:-mr-20 md:ml-10 md:max-w-[45%] md:text-left",
-  quote: "my-6 text-center text-3xl font-bold",
+  subscript: 'subscript',
+  superscript: 'superscript',
+  highlightBox: 'border-grey-400 bg-grey-200 text-grey-900 block rounded-sm border p-3 font-bold',
+  quoteRight: 'mb-4 text-center text-3xl font-bold md:float-right md:-mr-20 md:ml-10 md:max-w-[45%] md:text-left',
+  quote: 'my-6 text-center text-3xl font-bold',
 };
 
 const headingLevelToVariant: Record<number, string> = {
-  1: "h1",
-  2: "h2",
-  3: "h3",
-  4: "h4",
-  5: "h5",
-  6: "h6",
+  1: 'h1',
+  2: 'h2',
+  3: 'h3',
+  4: 'h4',
+  5: 'h5',
+  6: 'h6',
 };
 
 const schema: Schema = {
@@ -91,19 +75,17 @@ const schema: Schema = {
       return {
         component: Typography,
         props: {
-          class: clsxm('mb-5 text-gray-500',className),
+          class: clsxm('mb-5 text-gray-500', className),
           variant: variant,
-          as: optionTag || "p",
+          as: optionTag || 'p',
         },
       };
     },
     heading: ({ attrs, content }) => {
       const level = attrs.level || 1;
-      const headingText = (content || [])
-        .map((child) => child.text || "")
-        .join("");
+      const headingText = (content || []).map((child) => child.text || '').join('');
       const id = sentenceToId(headingText);
-      const headingVariant = headingLevelToVariant[level] || "h6";
+      const headingVariant = headingLevelToVariant[level] || 'h6';
 
       return {
         component: Typography,
@@ -111,34 +93,34 @@ const schema: Schema = {
           as: `h${level}`,
           id,
           variant: headingVariant,
-          class: "mb-6 mt-10",
+          class: 'mb-6 mt-10',
         },
       };
     },
     blockquote: () => ({
       component: Typography,
       props: {
-        variant: "quotation",
-        as: "blockquote",
-        class: "border-gray mb-5 border-l-[3px] pl-4 italic text-black",
+        variant: 'quotation',
+        as: 'blockquote',
+        class: 'border-gray mb-5 border-l-[3px] pl-4 italic text-black',
       },
     }),
     bullet_list: () => ({
-      component: "ul",
-      props: { class: "ml-[1rem] list-disc" },
+      component: 'ul',
+      props: { class: 'ml-[1rem] list-disc' },
     }),
     ordered_list: () => ({
-      component: "ol",
-      props: { class: "ml-[1rem] list-decimal" },
+      component: 'ol',
+      props: { class: 'ml-[1rem] list-decimal' },
     }),
     list_item: ({ content: itemContent }) => ({
-      component: "li",
-      props: { class: "-my-1 ml-4" },
+      component: 'li',
+      props: { class: '-my-1 ml-4' },
       // Otherwise, nested paragraphs are omitted - storyblok-rich-text-astro-renderer/dist/index.mjs
       content: resolveRichTextToNodes(
         {
-          type: "doc",
-          content: (itemContent as RichTextType["content"]) || [],
+          type: 'doc',
+          content: (itemContent as RichTextType['content']) || [],
         },
         {
           schema,
@@ -147,14 +129,14 @@ const schema: Schema = {
       ),
     }),
     code_block: ({ content: nodeContent, attrs }) => {
-      const code = (nodeContent || []).map((n) => n?.text || "").join("");
+      const code = (nodeContent || []).map((n) => n?.text || '').join('');
       const cls = attrs?.class;
 
       return {
         component: CodeBlock,
         props: {
           code,
-          lang: cls ?? "language-javascript",
+          lang: cls ?? 'language-javascript',
         },
       };
     },
@@ -164,34 +146,27 @@ const schema: Schema = {
       const { attrs, marks } = (node as ImageNode) || {};
 
       const imgNode = {
-        component: "img",
+        component: 'img',
         props: {
-          src: attrs?.src || "",
-          alt: attrs?.alt || "",
-          title: attrs?.title || "",
-          class: "mx-auto my-7 max-w-full",
-          loading: "lazy",
+          src: attrs?.src || '',
+          alt: attrs?.alt || '',
+          title: attrs?.title || '',
+          class: 'mx-auto my-7 max-w-full',
+          loading: 'lazy',
         },
       };
 
       // Wrap image with styled mark classes if present (to mirror Next.js renderRichText behavior)
-      const styledMarks = Array.isArray(marks)
-        ? marks.filter((mark) => mark?.type === "styled")
-        : [];
-      const customMarksClasses = styledMarks
-        .map((mark) => mark?.attrs?.class)
-        .filter(Boolean) as string[];
+      const styledMarks = Array.isArray(marks) ? marks.filter((mark) => mark?.type === 'styled') : [];
+      const customMarksClasses = styledMarks.map((mark) => mark?.attrs?.class).filter(Boolean) as string[];
       const resolvedCustomMarksClasses = customMarksClasses
-        .map(
-          (classname) =>
-            styledClasses[classname as keyof typeof styledClasses] || classname
-        )
-        .join(" ")
+        .map((classname) => styledClasses[classname as keyof typeof styledClasses] || classname)
+        .join(' ')
         .trim();
 
       if (resolvedCustomMarksClasses) {
         return {
-          component: "span",
+          component: 'span',
           props: { class: resolvedCustomMarksClasses },
           content: [imgNode],
         };
@@ -200,37 +175,35 @@ const schema: Schema = {
       return imgNode;
     },
     horizontal_rule: () => ({
-      component: "hr",
-      props: { class: "my-8 border-t border-gray-300" },
+      component: 'hr',
+      props: { class: 'my-8 border-t border-gray-300' },
     }),
   },
   marks: {
     bold: () => ({
-      component: "strong",
-      props: { class: "font-medium text-[#111827]" },
+      component: 'strong',
+      props: { class: 'font-medium text-[#111827]' },
     }),
-    underline: () => ({ component: "u", props: { class: "text-primary-600" } }),
+    underline: () => ({ component: 'u', props: { class: 'text-primary-600' } }),
     styled: ({ attrs }) => {
-      const className = attrs?.class || "";
+      const className = attrs?.class || '';
 
-      if (className === "subscript") return { component: "sub" };
-      if (className === "superscript") return { component: "sup" };
+      if (className === 'subscript') return { component: 'sub' };
+      if (className === 'superscript') return { component: 'sup' };
 
-      const styledClass =
-        styledClasses[className as keyof typeof styledClasses] || className;
+      const styledClass = styledClasses[className as keyof typeof styledClasses] || className;
 
-      let tag = "span";
-      if (className === "quoteRight" || className === "quote") tag = "q";
+      let tag = 'span';
+      if (className === 'quoteRight' || className === 'quote') tag = 'q';
 
       return { component: tag, props: { class: styledClass } };
     },
     link: ({ attrs }) => {
-      let href = attrs?.href || "";
-      const target = attrs?.target || "";
-      const linktype = attrs?.linktype || "";
-      if (typeof href === "string" && href.startsWith("//"))
-        href = `https://${href.slice(2)}`;
-      else if (linktype === "email") href = `mailto:${href}`;
+      let href = attrs?.href || '';
+      const target = attrs?.target || '';
+      const linktype = attrs?.linktype || '';
+      if (typeof href === 'string' && href.startsWith('//')) href = `https://${href.slice(2)}`;
+      else if (linktype === 'email') href = `mailto:${href}`;
       return {
         component: UnderlineLink,
         props: {
@@ -243,12 +216,12 @@ const schema: Schema = {
 };
 
 const resolver: Resolver<SbBlokData> = (blok) => {
-  if (blok.component === "Link") {
+  if (blok.component === 'Link') {
     return {
       component: ButtonLink,
       props: {
         href: sbLinkToHref(blok.link as StoryblokMultilink),
-        variant: "outline",
+        variant: 'outline',
       },
       content: blok.name as string,
     };

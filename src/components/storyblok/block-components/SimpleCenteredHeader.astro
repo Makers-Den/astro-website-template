@@ -1,11 +1,11 @@
 ---
-import Container from "~/components/ui/Container.astro";
-import VSpacer from "~/components/ui/VSpacer.astro";
-import Typography from "~/components/ui/typography/Typography.astro";
-import RichTextRenderer from "~/components/storyblok/utils/RichTextRenderer.astro";
-import type { SimpleCenteredHeaderStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
-import { makeEditable } from "~/utils/storyblokRepository/helpers";
+import Container from '~/components/ui/Container.astro';
+import VSpacer from '~/components/ui/VSpacer.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import RichTextRenderer from '~/components/storyblok/utils/RichTextRenderer.astro';
+import type { SimpleCenteredHeaderStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
 
 type Props = BlokProps<SimpleCenteredHeaderStoryblok>;
 
@@ -19,7 +19,7 @@ const { title, subTitle, description, spacingBottom = 'md', spacingTop = 'md' } 
     <div class="text-center">
       <Typography as="p" variant="eyebrow">{title || 'Fill the title'}</Typography>
 
-      <Typography as='p' variant='h1' class='mt-1 text-4xl font-extrabold text-primary-900 sm:text-5xl'>
+      <Typography as="p" variant="h1" class="mt-1 text-4xl font-extrabold text-primary-900 sm:text-5xl">
         {subTitle || 'Fill the subtitle'}
       </Typography>
       <div class="mx-auto mt-5 max-w-xl text-xl text-primary-700">
@@ -29,4 +29,3 @@ const { title, subTitle, description, spacingBottom = 'md', spacingTop = 'md' } 
   </Container>
   <VSpacer size={spacingBottom} />
 </div>
-

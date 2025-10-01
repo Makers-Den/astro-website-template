@@ -20,7 +20,6 @@ const { title, image, body, categories } = blok;
 
 const storyblokVersion = getStoryblokVersion(Astro.cookies);
 
-
 let resolvedCategories: StoryblokStory<CategoryStoryblok>[] = [];
 if (isCategoriesStory(categories)) {
   resolvedCategories = categories;
@@ -29,48 +28,39 @@ if (isCategoriesStory(categories)) {
     resolvedCategories = await getStoryblokStories<StoryblokStory<CategoryStoryblok>>({
       by_uuids: categories.join(','),
       version: storyblokVersion,
+      language: Astro.currentLocale,
     });
   } catch (error) {
     console.error('Error fetching categories:', error);
   }
 }
-
 ---
-    <Layout blok={blok} globalSettingsStory={globalSettingsStory}>
-      <div class='relative mb-10 h-[500px] w-full overflow-hidden bg-gray-100'>
-        {image && (
-          <StoryblokImage
-            priority
-            src={image.filename}
-            alt={image.alt}
-            fill
-            class='object-cover'
-          />
-        )}
-      </div>
 
-      <Container class='mb-20'>
-        <Typography as="h1" variant='h1' class='mb-10'>{title}</Typography>
-        <main>
-          {
-              body?.map((blok) =>
-                blok.component === 'RichTextContent' && 'text' in blok ? (
-                  <RichTextContent blok={blok} />
-                ) : (
-                  <StoryblokComponent blok={blok as SbBlokData} pageType="Blog" />
-                )
-              )
-            }
-        </main>
+<Layout blok={blok} globalSettingsStory={globalSettingsStory}>
+  <div class="relative mb-10 h-[500px] w-full overflow-hidden bg-gray-100">
+    {image && <StoryblokImage priority src={image.filename} alt={image.alt} fill class="object-cover" />}
+  </div>
 
-        <div class='mt-5 flex flex-wrap gap-3'>
-          {resolvedCategories?.map((category) => (
-            <div
-              class='rounded-sm bg-primary-600 p-1 text-white'
-            >
-              {category.content.name}
-            </div>
-          ))}
-        </div>
-      </Container>
-    </Layout>
+  <Container class="mb-20">
+    <Typography as="h1" variant="h1" class="mb-10">{title}</Typography>
+    <main>
+      {
+        body?.map((blok) =>
+          blok.component === 'RichTextContent' && 'text' in blok ? (
+            <RichTextContent blok={blok} />
+          ) : (
+            <StoryblokComponent blok={blok as SbBlokData} pageType="Blog" />
+          )
+        )
+      }
+    </main>
+
+    <div class="mt-5 flex flex-wrap gap-3">
+      {
+        resolvedCategories?.map((category) => (
+          <div class="rounded-sm bg-primary-600 p-1 text-white">{category.content.name}</div>
+        ))
+      }
+    </div>
+  </Container>
+</Layout>

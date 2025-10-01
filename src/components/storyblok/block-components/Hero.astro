@@ -1,10 +1,10 @@
 ---
-import StoryblokImage from "~/components/ui/StoryblokImage.astro";
-import Typography from "~/components/ui/typography/Typography.astro";
-import CtaLink from "./CtaLink.astro";
-import type { HeroStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
-import { makeEditable } from "~/utils/storyblokRepository/helpers";
+import StoryblokImage from '~/components/ui/StoryblokImage.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import CtaLink from './CtaLink.astro';
+import type { HeroStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
 
 type Props = BlokProps<HeroStoryblok>;
 
@@ -24,11 +24,13 @@ const { headingBlack, headingColorful, description, image, ctaLink } = blok;
           <Typography as="p" variant="introLarge" class="mx-auto mt-3 max-w-md text-gray-500 md:mt-5 md:max-w-3xl">
             {description}
           </Typography>
-          {ctaLink?.map((linkContent) => (
-            <div class="mt-10 sm:flex sm:justify-center lg:justify-start">
-              <CtaLink blok={linkContent} />
-            </div>
-          ))}
+          {
+            ctaLink?.map((linkContent) => (
+              <div class="mt-10 sm:flex sm:justify-center lg:justify-start">
+                <CtaLink blok={linkContent} />
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>
@@ -37,4 +39,3 @@ const { headingBlack, headingColorful, description, image, ctaLink } = blok;
     </div>
   </main>
 </div>
-

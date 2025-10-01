@@ -1,18 +1,9 @@
 import type { APIRoute } from 'astro';
-import { STORYBLOK_WEBHOOK_SECRET, CLOUDFLARE_ZONE_ID, CLOUDFLARE_API_KEY } from 'astro:env/server';
+import { STORYBLOK_WEBHOOK_SECRET, CLOUDFLARE_ZONE_ID, CLOUDFLARE_API_KEY, PUBLIC_SITE_URL } from 'astro:env/server';
 import { storyblokApi as storyblokApiInstanceAPIRoute } from '@storyblok/astro/client';
 import type { StoryblokStory } from '~/types/storyblok';
-import { getStoryblokStoriesForComponent } from '~/utils/storyblokRepository/apiRoutes';
 
 const removeTrailingSlash = (p: string) => p.replace(/\/$/, '');
-
-const globalStoriesToStoryblokComponents = {
-  'globals/testimonials': 'TestimonialsSection',
-  'globals/testimonials-settings': 'TestimonialsSection',
-  'globals/team-members': 'MakersSection',
-  'globals/about-settings': 'AboutSection',
-  'globals/faq-settings': 'Faq',
-};
 
 type WebhookBody = {
   story_id?: number | string;
@@ -49,26 +40,9 @@ export const POST: APIRoute = async ({ request, url }) => {
       });
     }
 
-    if (Object.keys(globalStoriesToStoryblokComponents).includes(story.full_slug)) {
-      const storyblokComponent = globalStoriesToStoryblokComponents[story.full_slug];
-
-      const allMatchingStories = await getStoryblokStoriesForComponent(storyblokComponent);
-
-      if (!allMatchingStories.length)
-        return new Response(
-          JSON.stringify({ success: true, purged: false, data: 'No matching stories', storyId, action }),
-          { status: 200 }
-        );
-
-      const tagsToPurge = allMatchingStories.map(
-        (story) => `html:${url.hostname}/${removeTrailingSlash(story.full_slug)}`
-      );
-
-      const purgeResults = await purgeCloudflareCache({ tags: tagsToPurge });
-
-      return new Response(JSON.stringify({ success: true, purged: tagsToPurge, data: purgeResults }), { status: 200 });
-    } else if (story.full_slug === 'global-settings') {
-      const purgeResults = await purgeCloudflareCache({ purge_everything: true });
+    if (story.full_slug === 'global-settings') {
+      const url = new URL(PUBLIC_SITE_URL);
+      const purgeResults = await purgeCloudflareCache({ hosts: [url.hostname] });
       return new Response(JSON.stringify({ success: true, purged: 'all', data: purgeResults }), { status: 200 });
     } else {
       const tagToPurge = `html:${url.hostname}/${removeTrailingSlash(story.full_slug)}`;
@@ -88,6 +62,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 interface PurgeCloudflareCacheOptions {
   tags?: string[];
   purge_everything?: boolean;
+  hosts?: string[];
 }
 
 async function purgeCloudflareCache(options: PurgeCloudflareCacheOptions) {

@@ -14,7 +14,7 @@ import {
 const slug = Astro.params.slug?.split('/') ?? [];
 const language = AVAILABLE_LANGUAGES.includes(slug[0]) ? slug[0] : undefined;
 if (language) {
-	slug.shift();
+  slug.shift();
 }
 
 const storySlug = slug.join('/') || 'home';
@@ -26,14 +26,11 @@ let globalSettingsStory: Awaited<ReturnType<typeof getGlobalSettingsStory>> = nu
 let error: Error | null = null;
 
 try {
-  const storyRequest = getStoryblokStoryWithRelations<StoryblokPageComponent>(
-    storySlug,
-    {
-      resolve_relations: RESOLVED_RELATIONS_ARRAY,
-      version: storyblokVersion,
-      language: language,
-    }
-  );
+  const storyRequest = getStoryblokStoryWithRelations<StoryblokPageComponent>(storySlug, {
+    resolve_relations: RESOLVED_RELATIONS_ARRAY,
+    version: storyblokVersion,
+    language: language,
+  });
   const globalSettingsStoryRequest = getGlobalSettingsStory({
     version: storyblokVersion,
     language: language,

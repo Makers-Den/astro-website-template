@@ -1,8 +1,8 @@
 ---
-import Typography from "~/components/ui/typography/Typography.astro";
-import type { OfficeStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
-import { makeEditable } from "~/utils/storyblokRepository/helpers";
+import Typography from '~/components/ui/typography/Typography.astro';
+import type { OfficeStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
 
 type Props = BlokProps<OfficeStoryblok>;
 
@@ -13,9 +13,6 @@ const { title, body } = blok;
 <div {...makeEditable(blok)}>
   <Typography as="h5" variant="h5" class="text-primary-900">{title}</Typography>
   <Typography as="p" variant="body" class="mt-2 text-primary-700">
-    {body ? body.map(({ text }) => (
-      <span class="block break-words ">{text}</span>
-    )) : null}
+    {body ? body.map(({ text }) => <span class="block break-words ">{text}</span>) : null}
   </Typography>
 </div>
-

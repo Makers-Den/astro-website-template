@@ -1,18 +1,17 @@
 ---
-import UnstyledLink from "~/components/ui/UnstyledLink.astro";
-import Typography from "~/components/ui/typography/Typography.astro";
-import type { LatestPostsStoryblok, PostStoryblok, StoryblokStory } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
-import { getStoryblokStories } from "~/utils/storyblokRepository";
-import { makeEditable } from "~/utils/storyblokRepository/helpers";
+import UnstyledLink from '~/components/ui/UnstyledLink.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import type { LatestPostsStoryblok, PostStoryblok, StoryblokStory } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import { getStoryblokStories } from '~/utils/storyblokRepository';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
 
 type Props = BlokProps<LatestPostsStoryblok>;
 
 const { blok } = Astro.props;
 const { title, category } = blok;
 
-
-const categoryUuid = category && (typeof category !== 'string') && ("uuid" in category) ? category.uuid : category;
+const categoryUuid = category && typeof category !== 'string' && 'uuid' in category ? category.uuid : category;
 
 const posts = await getStoryblokStories<StoryblokStory<PostStoryblok>>({
   starts_with: 'blog/',
@@ -39,15 +38,21 @@ console.log(posts);
 
     <div class="mt-12">
       <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {posts?.map((post) => (
-          <div class="pt-6">
-            <div class="flow-root rounded-lg bg-gray-50 px-6 py-8">
-              <UnstyledLink class="mt-8 text-lg font-medium tracking-tight text-gray-900" href={`/${post.full_slug}`.replace(/^\/+/, '/')}>{post.content?.title}</UnstyledLink>
+        {
+          posts?.map((post) => (
+            <div class="pt-6">
+              <div class="flow-root rounded-lg bg-gray-50 px-6 py-8">
+                <UnstyledLink
+                  class="mt-8 text-lg font-medium tracking-tight text-gray-900"
+                  href={`/${post.full_slug}`.replace(/^\/+/, '/')}
+                >
+                  {post.content?.title}
+                </UnstyledLink>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        }
       </div>
     </div>
   </div>
 </div>
-

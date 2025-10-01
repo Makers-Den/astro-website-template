@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://localhost:3010/blog</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://localhost:3010/blog" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://localhost:3010/blog" />
+    <lastmod>2025-10-01T08:56:56.486Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://localhost:3010/about</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://localhost:3010/about" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://localhost:3010/about" />
+    <lastmod>2025-10-01T08:56:56.486Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://localhost:3010/blog/first-post</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://localhost:3010/blog/first-post" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://localhost:3010/blog/first-post" />
+    <lastmod>2025-10-01T08:56:56.486Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://localhost:3010/blog/second-post</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://localhost:3010/blog/second-post" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://localhost:3010/blog/second-post" />
+    <lastmod>2025-10-01T08:56:56.486Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://localhost:3010/blog/third-post</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://localhost:3010/blog/third-post" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://localhost:3010/blog/third-post" />
+    <lastmod>2025-10-01T08:56:56.486Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://localhost:3010/</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://localhost:3010/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://localhost:3010/" />
+    <lastmod>2025-10-01T08:56:56.486Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+</urlset>

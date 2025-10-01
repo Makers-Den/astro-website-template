@@ -1,5 +1,5 @@
 export default function ogImageBase(title: string, image: string) {
-    return `
+  return `
           <div style="
               margin: 0;
               padding: 0;
@@ -79,5 +79,4 @@ export default function ogImageBase(title: string, image: string) {
               </div>
           </div>
       `;
-  }
-  
+}

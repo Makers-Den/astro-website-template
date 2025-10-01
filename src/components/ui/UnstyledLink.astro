@@ -15,7 +15,7 @@ const { href, class: className, openNewTab, ...rest } = Astro.props;
 const isNewTab = openNewTab !== undefined ? openNewTab : href && !href.startsWith('/') && !href.startsWith('#');
 
 let hrefLocalized = href;
-if (href.startsWith('/') && currentLocale && (hrefLocalized.split('/')[1] !== currentLocale)) {
+if (href.startsWith('/') && currentLocale && hrefLocalized.split('/')[1] !== currentLocale) {
   hrefLocalized = getRelativeLocaleUrl(currentLocale, href).replace(/\/$/, '');
 }
 

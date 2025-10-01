@@ -1,11 +1,11 @@
 ---
-import NavLinkDesktop from "~/components/common/header/blocks/NavLinkDesktop.astro";
-import Typography from "~/components/ui/typography/Typography.astro";
-import { clsxm } from "~/utils/helpers";
-import type { NavSectionStoryblok } from "~/types/storyblok";
-import type { BlokProps } from "~/types/storyblok.custom";
-import { makeEditable } from "~/utils/storyblokRepository/helpers";
-import SvgIcon from "~/components/ui/SvgIcon.astro";
+import NavLinkDesktop from '~/components/common/header/blocks/NavLinkDesktop.astro';
+import Typography from '~/components/ui/typography/Typography.astro';
+import { clsxm } from '~/utils/helpers';
+import type { NavSectionStoryblok } from '~/types/storyblok';
+import type { BlokProps } from '~/types/storyblok.custom';
+import { makeEditable } from '~/utils/storyblokRepository/helpers';
+import SvgIcon from '~/components/ui/SvgIcon.astro';
 
 type Props = BlokProps<NavSectionStoryblok>;
 
@@ -25,14 +25,15 @@ const { name, links } = blok;
 
     <div class="absolute left-0 top-0 translate-y-[62px] z-0">
       <div class={clsxm('min-w-[13rem] overflow-hidden rounded bg-white py-3 shadow')}>
-        {links?.map((link) => (
-          <div>
-            <NavLinkDesktop blok={link} class="inline-block px-4" />
-            <div class="h-1" />
-          </div>
-        ))}
+        {
+          links?.map((link) => (
+            <div>
+              <NavLinkDesktop blok={link} class="inline-block px-4" />
+              <div class="h-1" />
+            </div>
+          ))
+        }
       </div>
     </div>
   </details>
 </div>
-
