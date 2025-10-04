@@ -101,10 +101,16 @@ export default {
       Object.entries(colors).forEach(([colorName, colorValue]) => {
         if (typeof colorValue === 'object') {
           Object.entries(colorValue).forEach(([shade, value]) => {
-            cssVars[`--${colorName}-${shade}`] = value;
+            const resolved = typeof value === 'function' ? value({}) : value;
+            if (typeof resolved === 'string') {
+              cssVars[`--${colorName}-${shade}`] = resolved;
+            }
           });
         } else {
-          cssVars[`--${colorName}`] = colorValue;
+          const resolved = typeof colorValue === 'function' ? colorValue({}) : colorValue;
+          if (typeof resolved === 'string') {
+            cssVars[`--${colorName}`] = resolved;
+          }
         }
       });
 

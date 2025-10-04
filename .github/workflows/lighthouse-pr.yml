@@ -1,0 +1,98 @@
+name: Lighthouse on PR (CF Preview Deployments)
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  lighthouse-pr:
+    runs-on: ubuntu-latest
+    env:
+      STORYBLOK_TOKEN: ${{ secrets.STORYBLOK_TOKEN }}
+      STORYBLOK_VERSION: ${{ vars.STORYBLOK_VERSION }}
+      PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
+      COOKIE_CONSENT_ENABLED: ${{ vars.COOKIE_CONSENT_ENABLED }}
+      PUBLIC_STAPE_URL: ${{ vars.PUBLIC_STAPE_URL }}
+      PUBLIC_STAPE_GTM_SCRIPT_LINK: ${{ vars.PUBLIC_STAPE_GTM_SCRIPT_LINK }}
+      PUBLIC_STAPE_GTM_SCRIPT_ARG: ${{ vars.PUBLIC_STAPE_GTM_SCRIPT_ARG }}
+      STORYBLOK_MANAGEMENT_TOKEN: ${{ secrets.STORYBLOK_MANAGEMENT_TOKEN }}
+      STORYBLOK_WEBHOOK_SECRET: ${{ secrets.STORYBLOK_WEBHOOK_SECRET }}
+      STORYBLOK_SPACE_ID: ${{ vars.STORYBLOK_SPACE_ID }}
+      PUBLIC_GTM_ID: ${{ vars.PUBLIC_GTM_ID }}
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm i -g @lhci/cli@0.14.x jq
+
+      - name: Set up pnpm
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Derive Preview Name and URL
+        id: url
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          # normalize: lowercase + non-alphanumerics to '-'
+          SAFE_BRANCH=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
+          echo "PREVIEW_NAME=$SAFE_BRANCH" >> $GITHUB_ENV
+          echo "PREVIEW_URL=https://${SAFE_BRANCH}-${{ vars.CLOUDFLARE_WORKER_NAME }}.${{ secrets.CLOUDFLARE_WORKER_SUBDOMAIN }}.workers.dev" >> $GITHUB_ENV
+          echo "Preview URL: $PREVIEW_URL"
+
+      - name: Deploy preview Worker
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_WORKERS_EDIT }}
+        run: |
+          npx wrangler versions upload --preview-alias $SAFE_BRANCH
+
+      - name: Run Lighthouse on preview
+        env:
+          PREVIEW_URL: ${{ env.PREVIEW_URL }}
+        run: |
+          TMP=$(mktemp)
+          jq '.ci.collect.url |= map(env.PREVIEW_URL + .)' .lighthouserc.json > $TMP
+          lhci collect --config=$TMP --output=json || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lh-pr-${{ github.event.pull_request.number }}
+          path: .lighthouseci/*.json
+
+      # --- Get baseline from main ---
+      - name: Download baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          WORKFLOW_ID=$(gh api repos/${{ github.repository }}/actions/workflows \
+            -q '.workflows[] | select(.name=="Lighthouse Baseline (main)") | .id')
+          RUN_ID=$(gh api repos/${{ github.repository }}/actions/workflows/$WORKFLOW_ID/runs \
+            -q '.workflow_runs[] | select(.conclusion=="success") | .id' | head -n1)
+          gh api repos/${{ github.repository }}/actions/runs/$RUN_ID/artifacts \
+            -q '.artifacts[] | select(.name=="lh-baseline") | .archive_download_url' \
+            | xargs -I {} gh api {} --method GET --output baseline.zip
+          mkdir baseline && unzip -q baseline.zip -d baseline
+
+      - name: Diff Lighthouse
+        run: |
+          node .github/scripts/lh-diff.js baseline .lighthouseci > lh-diff.md || true
+          test -s lh-diff.md || echo "_No overlap with baseline_" > lh-diff.md
+
+      - name: Comment diff
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: lighthouse-compare
+          recreate: true
+          message: |
+            🔎 **Lighthouse diff vs main**
+            Preview: ${{ env.PREVIEW_URL }}
+
+            $(cat lh-diff.md)

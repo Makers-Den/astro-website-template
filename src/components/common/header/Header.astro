@@ -9,6 +9,7 @@ import { sbLinkToHref } from '~/utils/storyblokRepository/helpers';
 import type { NavSectionStoryblok, LinkStoryblok } from '~/types/storyblok';
 import SvgIcon from '~/components/ui/SvgIcon.astro';
 import LocaleSwitcher from '../LocaleSwitcher.astro';
+import DownloadPdfButton from '~/components/ui/DownloadPdfButton';
 
 export interface Props {
   items?: Array<NavSectionStoryblok | LinkStoryblok>;
@@ -48,6 +49,9 @@ const ctaText = primaryCta?.name || '';
       <div class={clsxm('h-full', 'col-span-10', 'hidden lg:flex', 'items-center justify-between')}>
         <div class={clsxm('ml-1 h-full gap-6 xl:gap-20', 'hidden lg:flex')}>
           <DesktopMenu items={items} />
+          <div class="hidden lg:flex  items-center">
+            <DownloadPdfButton client:load />
+          </div>
         </div>
       </div>
     </div>

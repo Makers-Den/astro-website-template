@@ -1,5 +1,6 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
+import react from '@astrojs/react';
 
 import { defineConfig, envField, passthroughImageService } from 'astro/config';
 
@@ -76,6 +77,7 @@ export default defineConfig({
     ],
   },
   integrations: [
+    react(),
     tailwind({
       applyBaseStyles: false,
     }),
@@ -144,6 +146,29 @@ export default defineConfig({
       alias: {
         '~': path.resolve(__dirname, './src'),
         '@/fonts': path.resolve(__dirname, './src/assets/fonts'),
+        ...((process.env.NODE_ENV === 'production') ? { 'react-dom/server': 'react-dom/server.edge' } : {}),
+      },
+    },
+    ssr: {
+      external: [
+        'node:fs',
+        'node:fs/promises',
+        'node:path',
+        'node:url',
+        'node:crypto',
+        'node:buffer',
+        'node:http2',
+        'fs',
+        'os',
+        'path',
+        'child_process',
+        'crypto',
+        'tty',
+        'worker_threads',
+      ],
+      resolve: {
+        conditions: ['workerd', 'worker', 'browser'],
+        externalConditions: ['workerd', 'worker'],
       },
     },
     build: {
