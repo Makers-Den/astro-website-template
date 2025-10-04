@@ -35,8 +35,8 @@ jobs:
 
       - name: Install Lighthouse CLI
         run: |
-          pnpm add -g @lhci/cli@0.14.x
-          pnpm add -g jq
+          pnpm add @lhci/cli@0.14.x
+          pnpm add jq
 
       - name: Build
         run: pnpm build
