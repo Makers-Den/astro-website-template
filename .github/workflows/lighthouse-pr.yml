@@ -50,8 +50,14 @@ jobs:
           BRANCH="${{ github.head_ref }}"
           # normalize: lowercase + non-alphanumerics to '-'
           SAFE_BRANCH=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
+          PREVIEW_URL="https://${SAFE_BRANCH}-${{ vars.CLOUDFLARE_WORKER_NAME }}.${{ secrets.CLOUDFLARE_WORKER_SUBDOMAIN }}.workers.dev"
+          
+          echo "SAFE_BRANCH=$SAFE_BRANCH" >> $GITHUB_ENV
           echo "PREVIEW_NAME=$SAFE_BRANCH" >> $GITHUB_ENV
-          echo "PREVIEW_URL=https://${SAFE_BRANCH}-${{ vars.CLOUDFLARE_WORKER_NAME }}.${{ secrets.CLOUDFLARE_WORKER_SUBDOMAIN }}.workers.dev" >> $GITHUB_ENV
+          echo "PREVIEW_URL=$PREVIEW_URL" >> $GITHUB_ENV
+          
+          echo "Branch: $BRANCH"
+          echo "Safe branch: $SAFE_BRANCH"
           echo "Preview URL: $PREVIEW_URL"
 
       - name: Deploy preview Worker
@@ -59,15 +65,17 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_WORKERS_EDIT }}
         run: |
-          npx wrangler versions upload --preview-alias $SAFE_BRANCH
+          echo "Deploying with alias: ${{ env.SAFE_BRANCH }}"
+          npx wrangler versions upload --preview-alias ${{ env.SAFE_BRANCH }}
 
       - name: Run Lighthouse on preview
         env:
           PREVIEW_URL: ${{ env.PREVIEW_URL }}
         run: |
+          echo "Running Lighthouse on: ${{ env.PREVIEW_URL }}"
           TMP=$(mktemp)
           jq '.ci.collect.url |= map(env.PREVIEW_URL + .)' .lighthouserc.json > $TMP
-          lhci collect --config=$TMP --output=json || true
+          pnpx lhci collect --config=$TMP --output=json || true
 
       - uses: actions/upload-artifact@v4
         with:
