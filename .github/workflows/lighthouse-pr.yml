@@ -18,6 +18,9 @@ jobs:
       STORYBLOK_WEBHOOK_SECRET: ${{ secrets.STORYBLOK_WEBHOOK_SECRET }}
       STORYBLOK_SPACE_ID: ${{ vars.STORYBLOK_SPACE_ID }}
       PUBLIC_GTM_ID: ${{ vars.PUBLIC_GTM_ID }}
+      CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
+      CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+      PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL }}
     permissions:
       contents: read
       pull-requests: write
@@ -55,15 +58,6 @@ jobs:
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_WORKERS_EDIT }}
-          COOKIE_CONSENT_ENABLED: ${{ vars.COOKIE_CONSENT_ENABLED }}
-          STORYBLOK_VERSION: ${{ vars.STORYBLOK_VERSION }}
-          STORYBLOK_SPACE_ID: ${{ vars.STORYBLOK_SPACE_ID }}
-          PUBLIC_STAPE_URL: ${{ vars.PUBLIC_STAPE_URL }}
-          PUBLIC_STAPE_GTM_SCRIPT_LINK: ${{ vars.PUBLIC_STAPE_GTM_SCRIPT_LINK }}
-          PUBLIC_STAPE_GTM_SCRIPT_ARG: ${{ vars.PUBLIC_STAPE_GTM_SCRIPT_ARG }}
-          CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
-          PUBLIC_GTM_ID: ${{ vars.PUBLIC_GTM_ID }}
-          PUBLIC_SITE_URL: ${{ env.PREVIEW_URL }}
         run: |
           npx wrangler versions upload --preview-alias $SAFE_BRANCH
 
