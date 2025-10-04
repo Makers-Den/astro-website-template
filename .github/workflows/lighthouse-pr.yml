@@ -76,7 +76,8 @@ jobs:
           echo "Running Lighthouse on: ${{ env.PREVIEW_URL }}"
           TMP=$(mktemp)
           jq '.ci.collect.url |= map(env.PREVIEW_URL + .)' .lighthouserc.json > $TMP
-          pnpx lhci collect --config=$TMP --output=json || true
+          cat $TMP
+          pnpm exec lhci collect --config=$TMP || true
 
       - uses: actions/upload-artifact@v4
         with:

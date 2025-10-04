@@ -18,7 +18,8 @@ jobs:
           BASE_URL: https://template.makersden.dev   # prod Worker route
         run: |
           jq '.ci.collect.url |= map(env.BASE_URL + .)' .lighthouserc.json > lhci.main.json
-          npx lhci collect --config=lhci.main.json --output=json
+          cat lhci.main.json
+          npx lhci collect --config=lhci.main.json
 
       - run: mkdir baseline && cp .lighthouseci/*.json baseline/
       - uses: actions/upload-artifact@v4
