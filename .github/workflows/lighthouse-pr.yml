@@ -37,10 +37,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Lighthouse CLI
+      - name: Install Lighthouse CLI and jq
         run: |
-          pnpm add @lhci/cli@0.14.x
-          pnpm add jq
+          sudo apt-get update
+          sudo apt-get install -y jq
+          pnpm add -D @lhci/cli@0.14.x
 
       - name: Build
         run: pnpm build
@@ -76,8 +77,16 @@ jobs:
           echo "Running Lighthouse on: ${{ env.PREVIEW_URL }}"
           TMP=$(mktemp)
           jq '.ci.collect.url |= map(env.PREVIEW_URL + .)' .lighthouserc.json > $TMP
+          echo "=== Generated config ==="
           cat $TMP
-          pnpm exec lhci collect --config=$TMP || true
+          echo "=== Running Lighthouse ==="
+          pnpm exec lhci collect --config=$TMP || echo "Lighthouse collection failed"
+          echo "=== Checking for results ==="
+          ls -la .lighthouseci/ || echo "No .lighthouseci directory found"
+          if [ -d ".lighthouseci" ]; then
+            echo "Files in .lighthouseci:"
+            ls -la .lighthouseci/
+          fi
 
       - uses: actions/upload-artifact@v4
         with:

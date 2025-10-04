@@ -5,8 +5,9 @@
  * Usage: node lh-diff.js <baseline-dir> <pr-dir>
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const [, , baselineDir, prDir] = process.argv;
 
