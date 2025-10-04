@@ -26,13 +26,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: npm install @lhci/cli@0.14.x jq
 
       - name: Set up pnpm
         run: corepack enable
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Install Lighthouse CLI
+        run: npm install @lhci/cli@0.14.x jq
 
       - name: Build
         run: pnpm build
