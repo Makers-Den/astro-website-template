@@ -102,6 +102,14 @@ jobs:
           node .github/scripts/lh-diff.js baseline .lighthouseci > lh-diff.md || true
           test -s lh-diff.md || echo "_No overlap with baseline_" > lh-diff.md
 
+      - name: Read diff results
+        id: diff
+        run: |
+          DIFF_CONTENT=$(cat lh-diff.md)
+          echo "LIGHTHOUSE_DIFF<<EOF" >> $GITHUB_ENV
+          cat lh-diff.md >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - name: Comment diff
         uses: marocchino/sticky-pull-request-comment@v2
         with:
@@ -111,4 +119,4 @@ jobs:
             🔎 **Lighthouse diff vs main**
             Preview: ${{ env.PREVIEW_URL }}
 
-            $(cat lh-diff.md)
+            ${{ env.LIGHTHOUSE_DIFF }}
