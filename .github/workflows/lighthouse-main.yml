@@ -10,15 +10,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - run: npm i -g @lhci/cli@0.14.x jq
+        with: { node-version: 22 }
+      - run: npm install @lhci/cli@0.14.x jq
 
       - name: Collect Lighthouse on production
         env:
           BASE_URL: https://template.makersden.dev   # prod Worker route
         run: |
           jq '.ci.collect.url |= map(env.BASE_URL + .)' .lighthouserc.json > lhci.main.json
-          lhci collect --config=lhci.main.json --output=json
+          npx lhci collect --config=lhci.main.json --output=json
 
       - run: mkdir baseline && cp .lighthouseci/*.json baseline/
       - uses: actions/upload-artifact@v4
