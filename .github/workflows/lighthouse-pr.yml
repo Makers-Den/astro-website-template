@@ -34,7 +34,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Lighthouse CLI
-        run: npm install @lhci/cli@0.14.x jq
+        run: |
+          pnpm add -g @lhci/cli@0.14.x
+          pnpm add -g jq
 
       - name: Build
         run: pnpm build
@@ -71,7 +73,7 @@ jobs:
         run: |
           TMP=$(mktemp)
           jq '.ci.collect.url |= map(env.PREVIEW_URL + .)' .lighthouserc.json > $TMP
-          npx lhci collect --config=$TMP --output=json || true
+          lhci collect --config=$TMP --output=json || true
 
       - uses: actions/upload-artifact@v4
         with:
