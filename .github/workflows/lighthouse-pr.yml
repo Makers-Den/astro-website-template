@@ -24,6 +24,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      actions: read
 
     steps:
       - uses: actions/checkout@v4
@@ -50,7 +51,7 @@ jobs:
           BRANCH="${{ github.head_ref }}"
           # normalize: lowercase + non-alphanumerics to '-'
           SAFE_BRANCH=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
-          PREVIEW_URL="https://${SAFE_BRANCH}-${{ vars.CLOUDFLARE_WORKER_NAME }}.${{ secrets.CLOUDFLARE_WORKER_SUBDOMAIN }}.workers.dev"
+          PREVIEW_URL="https://${SAFE_BRANCH}-${{ vars.CLOUDFLARE_WORKER_NAME }}.${{ vars.CLOUDFLARE_WORKER_SUBDOMAIN }}.workers.dev"
           
           echo "SAFE_BRANCH=$SAFE_BRANCH" >> $GITHUB_ENV
           echo "PREVIEW_NAME=$SAFE_BRANCH" >> $GITHUB_ENV
