@@ -42,8 +42,8 @@ if (isCategoriesStory(categories)) {
   </div>
 
   <Container class="mb-20">
-    <Typography as="h1" variant="h1" class="mb-10">{title}</Typography>
     <main>
+      <Typography as="h1" variant="h1" class="mb-10">{title}</Typography>
       {
         body?.map((blok) =>
           blok.component === 'RichTextContent' && 'text' in blok ? (

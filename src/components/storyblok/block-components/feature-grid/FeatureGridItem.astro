@@ -8,7 +8,6 @@ import { makeEditable } from '~/utils/storyblokRepository/helpers';
 type Props = BlokProps<FeatureGridItemStoryblok>;
 const { blok } = Astro.props;
 const { title, icon, description } = blok;
-console.log(icon);
 ---
 
 <div class="pt-6" {...makeEditable(blok)}>
