@@ -18,63 +18,87 @@ if (!STORYBLOK_TOKEN) {
 function fetchStoryblokStories(page = 1, allStories = []) {
   return new Promise((resolve, reject) => {
     const url = `https://api.storyblok.com/v2/cdn/stories?token=${STORYBLOK_TOKEN}&version=${STORYBLOK_VERSION}&per_page=100&page=${page}`;
+    console.log(url);
+
+    const options = {
+      followRedirect: true,
+      maxRedirects: 5
+    };
     
     https.get(url, (res) => {
-      let data = '';
-
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
-
-      res.on('end', () => {
-        // Log response status and data for debugging
-        console.error(`API Response Status: ${res.statusCode}`);
+      // Handle redirects
+      if (res.statusCode === 301 || res.statusCode === 302) {
+        const redirectUrl = res.headers.location;
+        console.error(`Following redirect to: ${redirectUrl}`);
         
-        if (res.statusCode !== 200) {
-          console.error(`API Response: ${data.substring(0, 500)}`);
-          reject(new Error(`Storyblok API returned status ${res.statusCode}: ${data.substring(0, 200)}`));
-          return;
-        }
-
-        if (!data || data.trim() === '') {
-          reject(new Error('Empty response from Storyblok API'));
-          return;
-        }
-
-        try {
-          const response = JSON.parse(data);
-          
-          if (!response.stories) {
-            console.error(`Invalid response structure: ${JSON.stringify(response).substring(0, 500)}`);
-            reject(new Error('Invalid response from Storyblok API - missing stories array'));
-            return;
-          }
-
-          const stories = allStories.concat(response.stories);
-          
-          // Check if there are more pages
-          const total = response.total || 0;
-          const perPage = response.perPage || 100;
-          const hasMore = page * perPage < total;
-
-          if (hasMore) {
-            // Recursively fetch next page
-            fetchStoryblokStories(page + 1, stories)
-              .then(resolve)
-              .catch(reject);
-          } else {
-            resolve(stories);
-          }
-        } catch (err) {
-          console.error(`JSON Parse Error: ${err.message}`);
-          console.error(`Raw data (first 500 chars): ${data.substring(0, 500)}`);
-          reject(new Error(`Failed to parse Storyblok API response: ${err.message}`));
-        }
-      });
+        https.get(redirectUrl, (redirectRes) => {
+          handleResponse(redirectRes, page, allStories, resolve, reject);
+        }).on('error', (err) => {
+          console.error(`HTTPS Request Error (redirect): ${err.message}`);
+          reject(err);
+        });
+        return;
+      }
+      
+      handleResponse(res, page, allStories, resolve, reject);
     }).on('error', (err) => {
       console.error(`HTTPS Request Error: ${err.message}`);
       reject(err);
     });
+  });
+}
+
+function handleResponse(res, page, allStories, resolve, reject) {
+  let data = '';
+
+  res.on('data', (chunk) => {
+    data += chunk;
+  });
+
+  res.on('end', () => {
+    // Log response status and data for debugging
+    console.error(`API Response Status: ${res.statusCode}`);
+    
+    if (res.statusCode !== 200) {
+      console.error(`API Response: ${data.substring(0, 500)}`);
+      reject(new Error(`Storyblok API returned status ${res.statusCode}: ${data.substring(0, 200)}`));
+      return;
+    }
+
+    if (!data || data.trim() === '') {
+      reject(new Error('Empty response from Storyblok API'));
+      return;
+    }
+
+    try {
+      const response = JSON.parse(data);
+      
+      if (!response.stories) {
+        console.error(`Invalid response structure: ${JSON.stringify(response).substring(0, 500)}`);
+        reject(new Error('Invalid response from Storyblok API - missing stories array'));
+        return;
+      }
+
+      const stories = allStories.concat(response.stories);
+      
+      // Check if there are more pages
+      const total = response.total || 0;
+      const perPage = response.perPage || 100;
+      const hasMore = page * perPage < total;
+
+      if (hasMore) {
+        // Recursively fetch next page
+        fetchStoryblokStories(page + 1, stories)
+          .then(resolve)
+          .catch(reject);
+      } else {
+        resolve(stories);
+      }
+    } catch (err) {
+      console.error(`JSON Parse Error: ${err.message}`);
+      console.error(`Raw data (first 500 chars): ${data.substring(0, 500)}`);
+      reject(new Error(`Failed to parse Storyblok API response: ${err.message}`));
+    }
   });
 }
 
