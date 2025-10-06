@@ -7,7 +7,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 const [, , baselineDir, prDir] = process.argv;
 
@@ -54,26 +53,52 @@ function formatDiff(value1, value2) {
 }
 
 function generateTable(baseline, pr) {
-  const urls = Object.keys(baseline).filter(url => pr[url]);
+  const baselineUrls = Object.keys(baseline);
+  const prUrls = Object.keys(pr);
+  
+  // URLs that exist in both baseline and PR
+  const commonUrls = baselineUrls.filter(url => pr[url]);
+  
+  // URLs that only exist in PR (new pages)
+  const newUrls = prUrls.filter(url => !baseline[url]);
 
-  if (urls.length === 0) {
-    return null;
+  let output = '';
+
+  // Generate comparison table for common URLs
+  if (commonUrls.length > 0) {
+    output += '### 📊 Compared Pages\n\n';
+    output += '| URL | Metric | Baseline | PR | Change |\n';
+    output += '|-----|--------|----------|----|---------|\n';
+
+    for (const url of commonUrls) {
+      const b = baseline[url];
+      const p = pr[url];
+
+      output += `| ${url} | Performance | ${b.performance} | ${formatDiff(b.performance, p.performance)} | ${p.performance - b.performance} |\n`;
+      output += `| | Accessibility | ${b.accessibility} | ${formatDiff(b.accessibility, p.accessibility)} | ${p.accessibility - b.accessibility} |\n`;
+      output += `| | Best Practices | ${b.bestPractices} | ${formatDiff(b.bestPractices, p.bestPractices)} | ${p.bestPractices - b.bestPractices} |\n`;
+      output += `| | SEO | ${b.seo} | ${formatDiff(b.seo, p.seo)} | ${p.seo - b.seo} |\n`;
+    }
   }
 
-  let table = '| URL | Metric | Baseline | PR | Change |\n';
-  table += '|-----|--------|----------|----|---------|\n';
+  // Generate table for new URLs (PR only)
+  if (newUrls.length > 0) {
+    if (output) output += '\n';
+    output += '### ✨ New Pages (PR Only)\n\n';
+    output += '| URL | Metric | Score |\n';
+    output += '|-----|--------|-------|\n';
 
-  for (const url of urls) {
-    const b = baseline[url];
-    const p = pr[url];
+    for (const url of newUrls) {
+      const p = pr[url];
 
-    table += `| ${url} | Performance | ${b.performance} | ${formatDiff(b.performance, p.performance)} | ${p.performance - b.performance} |\n`;
-    table += `| | Accessibility | ${b.accessibility} | ${formatDiff(b.accessibility, p.accessibility)} | ${p.accessibility - b.accessibility} |\n`;
-    table += `| | Best Practices | ${b.bestPractices} | ${formatDiff(b.bestPractices, p.bestPractices)} | ${p.bestPractices - b.bestPractices} |\n`;
-    table += `| | SEO | ${b.seo} | ${formatDiff(b.seo, p.seo)} | ${p.seo - b.seo} |\n`;
+      output += `| ${url} | Performance | ${p.performance} |\n`;
+      output += `| | Accessibility | ${p.accessibility} |\n`;
+      output += `| | Best Practices | ${p.bestPractices} |\n`;
+      output += `| | SEO | ${p.seo} |\n`;
+    }
   }
 
-  return table;
+  return output || null;
 }
 
 try {
