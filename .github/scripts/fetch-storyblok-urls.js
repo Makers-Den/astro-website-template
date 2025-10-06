@@ -15,7 +15,7 @@ if (!STORYBLOK_TOKEN) {
 
 export const ALL_PAGE_TYPES = ['Page', 'Post'];
 
-async function fetchStoryblokStories(page = 1, contentType) {
+async function fetchStoryblokStories(page = 1, allStories, contentType) {
   try {
     const url = `https://api.storyblok.com/v2/cdn/stories?token=${STORYBLOK_TOKEN}&content_type=${contentType}&version=${STORYBLOK_VERSION}&per_page=100&page=${page}`;
     
@@ -37,6 +37,8 @@ async function fetchStoryblokStories(page = 1, contentType) {
       console.error(`Invalid response structure: ${JSON.stringify(data).substring(0, 500)}`);
       throw new Error('Invalid response from Storyblok API - missing stories array');
     }
+
+    allStories.push(...data.stories);
         
     console.error(`Fetched ${data.stories.length} stories`);
     
@@ -47,7 +49,7 @@ async function fetchStoryblokStories(page = 1, contentType) {
     
     if (hasMore) {
       console.error(`More pages available, fetching page ${page + 1}...`);
-      return fetchStoryblokStories(page + 1, contentType);
+      return fetchStoryblokStories(page + 1, allStories, contentType);
     }
     
     return data.stories;
@@ -72,11 +74,11 @@ async function main() {
   try {
     console.error('Fetching stories from Storyblok...');
     const allStories = [];
-    ALL_PAGE_TYPES.forEach(async (contentType) => {
-      const stories = await fetchStoryblokStories(1, contentType);
-      allStories.push(...stories);
+
+    for (const contentType of ALL_PAGE_TYPES) {
+      const stories = await fetchStoryblokStories(1, allStories, contentType);
       console.error(`Total stories fetched: ${stories.length}`);
-    });
+    };
 
 
     // Convert stories to URL paths
