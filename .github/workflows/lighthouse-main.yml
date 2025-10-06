@@ -7,17 +7,33 @@ on:
 jobs:
   lighthouse-main:
     runs-on: ubuntu-latest
+    env:
+      STORYBLOK_TOKEN: ${{ secrets.STORYBLOK_TOKEN }}
+      STORYBLOK_VERSION: ${{ vars.STORYBLOK_VERSION }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm install @lhci/cli@0.14.x jq
 
+      - name: Fetch Storyblok URLs
+        run: |
+          echo "Fetching URLs from Storyblok..."
+          node .github/scripts/fetch-storyblok-urls.js > storyblok-urls.json
+          echo "=== Storyblok URLs ==="
+          cat storyblok-urls.json
+
       - name: Collect Lighthouse on production
         env:
           BASE_URL: https://template.makersden.dev   # prod Worker route
         run: |
-          jq '.ci.collect.url |= map(env.BASE_URL + .)' .lighthouserc.json > lhci.main.json
+          # Use Storyblok URLs if available, otherwise fall back to default URLs
+          if [ -f storyblok-urls.json ]; then
+            URLS=$(cat storyblok-urls.json)
+            jq --argjson urls "$URLS" '.ci.collect.url = $urls | .ci.collect.url |= map(env.BASE_URL + .)' .lighthouserc.json > lhci.main.json
+          else
+            jq '.ci.collect.url |= map(env.BASE_URL + .)' .lighthouserc.json > lhci.main.json
+          fi
           cat lhci.main.json
           npx lhci collect --config=lhci.main.json
 

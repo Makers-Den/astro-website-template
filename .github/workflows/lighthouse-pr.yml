@@ -70,23 +70,35 @@ jobs:
           echo "Deploying with alias: ${{ env.SAFE_BRANCH }}"
           npx wrangler versions upload --preview-alias ${{ env.SAFE_BRANCH }}
 
+      - name: Fetch Storyblok URLs
+        env:
+          STORYBLOK_TOKEN: ${{ secrets.STORYBLOK_TOKEN }}
+          STORYBLOK_VERSION: ${{ env.STORYBLOK_VERSION }}
+        run: |
+          echo "Fetching URLs from Storyblok..."
+          node .github/scripts/fetch-storyblok-urls.js > storyblok-urls.json
+          echo "=== Storyblok URLs ==="
+          cat storyblok-urls.json
+
       - name: Run Lighthouse on preview
         env:
           PREVIEW_URL: ${{ env.PREVIEW_URL }}
         run: |
           echo "Running Lighthouse on: ${{ env.PREVIEW_URL }}"
           TMP=$(mktemp)
-          jq '.ci.collect.url |= map(env.PREVIEW_URL + .)' .lighthouserc.json > $TMP
+          # Use Storyblok URLs if available, otherwise fall back to default URLs
+          if [ -f storyblok-urls.json ]; then
+            URLS=$(cat storyblok-urls.json)
+            jq --argjson urls "$URLS" '.ci.collect.url = $urls | .ci.collect.url |= map(env.PREVIEW_URL + .)' .lighthouserc.json > $TMP
+          else
+            jq '.ci.collect.url |= map(env.PREVIEW_URL + .)' .lighthouserc.json > $TMP
+          fi
           echo "=== Generated config ==="
           cat $TMP
           echo "=== Running Lighthouse ==="
           pnpm exec lhci collect --config=$TMP || echo "Lighthouse collection failed"
           echo "=== Checking for results ==="
           ls -la .lighthouseci/ || echo "No .lighthouseci directory found"
-          if [ -d ".lighthouseci" ]; then
-            echo "Files in .lighthouseci:"
-            ls -la .lighthouseci/
-          fi
 
       - name: Prepare artifacts
         run: |
