@@ -88,10 +88,16 @@ jobs:
             ls -la .lighthouseci/
           fi
 
+      - name: Prepare artifacts
+        run: |
+          mkdir -p lh-pr-results
+          cp .lighthouseci/*.json lh-pr-results/ || echo "No JSON files to copy"
+          ls -la lh-pr-results/
+
       - uses: actions/upload-artifact@v4
         with:
           name: lh-pr-${{ github.event.pull_request.number }}
-          path: .lighthouseci/*.json
+          path: lh-pr-results
 
       # --- Get baseline from main ---
       - name: Download baseline
