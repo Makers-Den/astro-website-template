@@ -1,7 +1,6 @@
 {
     "ci": {
       "collect": {
-        "url": ["/", "/dev-page", "/blog"],
         "numberOfRuns": 3,
         "settings": {
           "throttling": {

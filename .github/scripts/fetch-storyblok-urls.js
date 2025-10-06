@@ -18,17 +18,13 @@ export const ALL_PAGE_TYPES = ['Page', 'Post'];
 async function fetchStoryblokStories(page = 1, allStories, contentType) {
   try {
     const url = `https://api.storyblok.com/v2/cdn/stories?token=${STORYBLOK_TOKEN}&content_type=${contentType}&version=${STORYBLOK_VERSION}&per_page=100&page=${page}`;
-    
-    console.error(`Fetching page ${url}...`);
-    
+        
     const response = await fetch(url);
-    
-    console.error(`API Response Status: ${response.status}`);
     
     if (!response.ok) {
       const text = await response.text();
       console.error(`API Response: ${text.substring(0, 500)}`);
-      throw new Error(`Storyblok API returned status ${response.status}: ${text.substring(0, 200)}`);
+      throw new Error(`Storyblok API returned status ${response.status}}`);
     }
     
     const data = await response.json();
@@ -40,7 +36,6 @@ async function fetchStoryblokStories(page = 1, allStories, contentType) {
 
     allStories.push(...data.stories);
         
-    console.error(`Fetched ${data.stories.length} stories`);
     
     // Check if there are more pages
     const total = data.total || 0;
@@ -48,7 +43,6 @@ async function fetchStoryblokStories(page = 1, allStories, contentType) {
     const hasMore = page * perPage < total;
     
     if (hasMore) {
-      console.error(`More pages available, fetching page ${page + 1}...`);
       return fetchStoryblokStories(page + 1, allStories, contentType);
     }
     
@@ -72,35 +66,20 @@ function storyToUrl(story) {
 
 async function main() {
   try {
-    console.error('Fetching stories from Storyblok...');
     const allStories = [];
 
     for (const contentType of ALL_PAGE_TYPES) {
-      const stories = await fetchStoryblokStories(1, allStories, contentType);
-      console.error(`Total stories fetched: ${stories.length}`);
+      await fetchStoryblokStories(1, allStories, contentType);
     };
-
 
     // Convert stories to URL paths
     const urls = allStories
       .map(storyToUrl)
-      .filter(url => url) // Remove any empty URLs
-      .sort(); // Sort for consistency
-
-    console.error(`Generated ${urls.length} URLs`);
+      .filter(url => url) 
+      .sort();
 
     if (urls.length === 0) {
-      console.error('Warning: No URLs generated. Check your content type filter.');
-      console.error('Falling back to all published stories...');
-      
-      // Fallback: return all stories as URLs
-      const allUrls = allStories
-        .map(storyToUrl)
-        .filter(url => url)
-        .sort();
-      
-      console.error(`Fallback: Generated ${allUrls.length} URLs from all stories`);
-      console.log(JSON.stringify(allUrls, null, 2));
+      throw new Error('No URLs generated. Check your content type filter.');
     } else {
       // Output as JSON array
       console.log(JSON.stringify(urls, null, 2));
