@@ -93,7 +93,7 @@ async function main() {
       console.error('Falling back to all published stories...');
       
       // Fallback: return all stories as URLs
-      const allUrls = stories
+      const allUrls = allStories
         .map(storyToUrl)
         .filter(url => url)
         .sort();
