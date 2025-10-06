@@ -73,7 +73,7 @@ jobs:
       - name: Fetch Storyblok URLs
         env:
           STORYBLOK_TOKEN: ${{ secrets.STORYBLOK_TOKEN }}
-          STORYBLOK_VERSION: ${{ env.STORYBLOK_VERSION }}
+          STORYBLOK_VERSION: ${{ vars.STORYBLOK_VERSION }}
         run: |
           echo "Fetching URLs from Storyblok..."
           node .github/scripts/fetch-storyblok-urls.js > storyblok-urls.json

@@ -27,11 +27,26 @@ function fetchStoryblokStories(page = 1, allStories = []) {
       });
 
       res.on('end', () => {
+        // Log response status and data for debugging
+        console.error(`API Response Status: ${res.statusCode}`);
+        
+        if (res.statusCode !== 200) {
+          console.error(`API Response: ${data.substring(0, 500)}`);
+          reject(new Error(`Storyblok API returned status ${res.statusCode}: ${data.substring(0, 200)}`));
+          return;
+        }
+
+        if (!data || data.trim() === '') {
+          reject(new Error('Empty response from Storyblok API'));
+          return;
+        }
+
         try {
           const response = JSON.parse(data);
           
           if (!response.stories) {
-            reject(new Error('Invalid response from Storyblok API'));
+            console.error(`Invalid response structure: ${JSON.stringify(response).substring(0, 500)}`);
+            reject(new Error('Invalid response from Storyblok API - missing stories array'));
             return;
           }
 
@@ -51,10 +66,15 @@ function fetchStoryblokStories(page = 1, allStories = []) {
             resolve(stories);
           }
         } catch (err) {
-          reject(err);
+          console.error(`JSON Parse Error: ${err.message}`);
+          console.error(`Raw data (first 500 chars): ${data.substring(0, 500)}`);
+          reject(new Error(`Failed to parse Storyblok API response: ${err.message}`));
         }
       });
-    }).on('error', reject);
+    }).on('error', (err) => {
+      console.error(`HTTPS Request Error: ${err.message}`);
+      reject(err);
+    });
   });
 }
 
