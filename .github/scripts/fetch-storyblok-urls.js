@@ -38,7 +38,7 @@ async function fetchStoryblokStories(page = 1, contentType) {
       throw new Error('Invalid response from Storyblok API - missing stories array');
     }
         
-    console.error(`Fetched ${data.stories.length} stories (total: ${stories.length})`);
+    console.error(`Fetched ${data.stories.length} stories`);
     
     // Check if there are more pages
     const total = data.total || 0;
@@ -78,7 +78,6 @@ async function main() {
       console.error(`Total stories fetched: ${stories.length}`);
     });
 
-    console.error(`Total stories fetched: ${allStories.length}`);
 
     // Convert stories to URL paths
     const urls = allStories
