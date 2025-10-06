@@ -5,8 +5,6 @@
  * Usage: STORYBLOK_TOKEN=xxx node fetch-storyblok-urls.js
  */
 
-import https from 'https';
-
 const STORYBLOK_TOKEN = process.env.STORYBLOK_TOKEN;
 const STORYBLOK_VERSION = process.env.STORYBLOK_VERSION || 'published';
 
@@ -15,91 +13,48 @@ if (!STORYBLOK_TOKEN) {
   process.exit(1);
 }
 
-function fetchStoryblokStories(page = 1, allStories = []) {
-  return new Promise((resolve, reject) => {
-    const url = `https://api.storyblok.com/v2/cdn/stories?token=${STORYBLOK_TOKEN}&version=${STORYBLOK_VERSION}&per_page=100&page=${page}`;
-    console.log(url);
+export const ALL_PAGE_TYPES = ['Page', 'Post'];
 
-    const options = {
-      followRedirect: true,
-      maxRedirects: 5
-    };
+async function fetchStoryblokStories(page = 1, contentType) {
+  try {
+    const url = `https://api.storyblok.com/v2/cdn/stories?token=${STORYBLOK_TOKEN}&content_type=${contentType}&version=${STORYBLOK_VERSION}&per_page=100&page=${page}`;
     
-    https.get(url, (res) => {
-      // Handle redirects
-      if (res.statusCode === 301 || res.statusCode === 302) {
-        const redirectUrl = res.headers.location;
-        console.error(`Following redirect to: ${redirectUrl}`);
+    console.error(`Fetching page ${url}...`);
+    
+    const response = await fetch(url);
+    
+    console.error(`API Response Status: ${response.status}`);
+    
+    if (!response.ok) {
+      const text = await response.text();
+      console.error(`API Response: ${text.substring(0, 500)}`);
+      throw new Error(`Storyblok API returned status ${response.status}: ${text.substring(0, 200)}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.stories) {
+      console.error(`Invalid response structure: ${JSON.stringify(data).substring(0, 500)}`);
+      throw new Error('Invalid response from Storyblok API - missing stories array');
+    }
         
-        https.get(redirectUrl, (redirectRes) => {
-          handleResponse(redirectRes, page, allStories, resolve, reject);
-        }).on('error', (err) => {
-          console.error(`HTTPS Request Error (redirect): ${err.message}`);
-          reject(err);
-        });
-        return;
-      }
-      
-      handleResponse(res, page, allStories, resolve, reject);
-    }).on('error', (err) => {
-      console.error(`HTTPS Request Error: ${err.message}`);
-      reject(err);
-    });
-  });
-}
-
-function handleResponse(res, page, allStories, resolve, reject) {
-  let data = '';
-
-  res.on('data', (chunk) => {
-    data += chunk;
-  });
-
-  res.on('end', () => {
-    // Log response status and data for debugging
-    console.error(`API Response Status: ${res.statusCode}`);
+    console.error(`Fetched ${data.stories.length} stories (total: ${stories.length})`);
     
-    if (res.statusCode !== 200) {
-      console.error(`API Response: ${data.substring(0, 500)}`);
-      reject(new Error(`Storyblok API returned status ${res.statusCode}: ${data.substring(0, 200)}`));
-      return;
+    // Check if there are more pages
+    const total = data.total || 0;
+    const perPage = data.perPage || 100;
+    const hasMore = page * perPage < total;
+    
+    if (hasMore) {
+      console.error(`More pages available, fetching page ${page + 1}...`);
+      return fetchStoryblokStories(page + 1, contentType);
     }
-
-    if (!data || data.trim() === '') {
-      reject(new Error('Empty response from Storyblok API'));
-      return;
-    }
-
-    try {
-      const response = JSON.parse(data);
-      
-      if (!response.stories) {
-        console.error(`Invalid response structure: ${JSON.stringify(response).substring(0, 500)}`);
-        reject(new Error('Invalid response from Storyblok API - missing stories array'));
-        return;
-      }
-
-      const stories = allStories.concat(response.stories);
-      
-      // Check if there are more pages
-      const total = response.total || 0;
-      const perPage = response.perPage || 100;
-      const hasMore = page * perPage < total;
-
-      if (hasMore) {
-        // Recursively fetch next page
-        fetchStoryblokStories(page + 1, stories)
-          .then(resolve)
-          .catch(reject);
-      } else {
-        resolve(stories);
-      }
-    } catch (err) {
-      console.error(`JSON Parse Error: ${err.message}`);
-      console.error(`Raw data (first 500 chars): ${data.substring(0, 500)}`);
-      reject(new Error(`Failed to parse Storyblok API response: ${err.message}`));
-    }
-  });
+    
+    return data.stories;
+  } catch (error) {
+    console.error(`Error fetching page ${page}:`, error.message);
+    throw error;
+  }
 }
 
 function storyToUrl(story) {
@@ -116,30 +71,39 @@ function storyToUrl(story) {
 async function main() {
   try {
     console.error('Fetching stories from Storyblok...');
-    const stories = await fetchStoryblokStories();
-    
-    // Filter only page content types (adjust based on your content types)
-    const pages = stories.filter(story => {
-      // Skip drafts if version is published
-      if (STORYBLOK_VERSION === 'published' && !story.published) {
-        return false;
-      }
-      
-      // Only include page and post content types (adjust to your needs)
-      const contentType = story.content?.component;
-      return contentType === 'page' || contentType === 'post';
+    const allStories = [];
+    ALL_PAGE_TYPES.forEach(async (contentType) => {
+      const stories = await fetchStoryblokStories(1, contentType);
+      allStories.push(...stories);
+      console.error(`Total stories fetched: ${stories.length}`);
     });
 
-    console.error(`Found ${pages.length} pages`);
+    console.error(`Total stories fetched: ${allStories.length}`);
 
     // Convert stories to URL paths
-    const urls = pages
+    const urls = allStories
       .map(storyToUrl)
       .filter(url => url) // Remove any empty URLs
       .sort(); // Sort for consistency
 
-    // Output as JSON array
-    console.log(JSON.stringify(urls, null, 2));
+    console.error(`Generated ${urls.length} URLs`);
+
+    if (urls.length === 0) {
+      console.error('Warning: No URLs generated. Check your content type filter.');
+      console.error('Falling back to all published stories...');
+      
+      // Fallback: return all stories as URLs
+      const allUrls = stories
+        .map(storyToUrl)
+        .filter(url => url)
+        .sort();
+      
+      console.error(`Fallback: Generated ${allUrls.length} URLs from all stories`);
+      console.log(JSON.stringify(allUrls, null, 2));
+    } else {
+      // Output as JSON array
+      console.log(JSON.stringify(urls, null, 2));
+    }
     
   } catch (error) {
     console.error('Error fetching Storyblok URLs:', error.message);
