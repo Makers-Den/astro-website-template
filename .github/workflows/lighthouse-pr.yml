@@ -21,6 +21,8 @@ jobs:
       CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
       CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
       PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      STORYBLOK_LLM_CONTEXTS_FOLDER_ID: ${{ vars.STORYBLOK_LLM_CONTEXTS_FOLDER_ID }}
     permissions:
       contents: read
       pull-requests: write

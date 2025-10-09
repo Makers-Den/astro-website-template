@@ -1180,6 +1180,51 @@
     "metadata": {}
   },
   {
+    "name": "LLMContext",
+    "display_name": "LLM Context",
+    "description": "LLM Context",
+    "created_at": "2025-10-08T08:03:31.334Z",
+    "updated_at": "2025-10-08T08:16:33.123Z",
+    "id": 99209262439611,
+    "schema": {
+      "sourceStoryId": {
+        "type": "number",
+        "pos": 0,
+        "id": "xtu4xw5QQ2CcEW3a0ilL3Q"
+      },
+      "sourceStorySlug": {
+        "type": "text",
+        "pos": 1,
+        "id": "mUFe-8C9QNCNt-sgME0XCw"
+      },
+      "markdownContent": {
+        "type": "markdown",
+        "pos": 2,
+        "id": "MwjILg1RR1WRFWiNZ8zhIw"
+      },
+      "generatedAt": {
+        "type": "text",
+        "pos": 3,
+        "id": "JEc0BLrOTBSr3d3V5mEUhw"
+      }
+    },
+    "image": null,
+    "preview_field": null,
+    "is_root": true,
+    "preview_tmpl": null,
+    "is_nestable": false,
+    "all_presets": [],
+    "preset_id": null,
+    "real_name": "LLM Context",
+    "component_group_uuid": null,
+    "color": null,
+    "icon": null,
+    "internal_tags_list": [],
+    "internal_tag_ids": [],
+    "content_type_asset_preview": null,
+    "metadata": {}
+  },
+  {
     "name": "LogoCloud",
     "display_name": null,
     "description": null,
@@ -1392,7 +1437,7 @@
     "display_name": null,
     "description": null,
     "created_at": "2022-02-11T13:09:45.769Z",
-    "updated_at": "2022-10-12T15:43:49.261Z",
+    "updated_at": "2025-10-08T09:32:02.021Z",
     "id": 2182365,
     "schema": {
       "body": {
@@ -1401,7 +1446,8 @@
         "restrict_type": "groups",
         "component_group_whitelist": [
           "86d84d80-d0bf-4fd1-abf2-39e326eb275e"
-        ]
+        ],
+        "id": "LMtp4fnLRSOv7TIf1as1Rw"
       },
       "tab-cb0c8546-b74a-4ff1-9a50-57d2a4b47080": {
         "type": "tab",
@@ -1411,19 +1457,37 @@
           "description",
           "image"
         ],
-        "pos": 0
+        "pos": 0,
+        "id": "ywyFRrdKT_GaUFfSpLRwgA"
       },
       "title": {
-        "type": "text"
+        "type": "text",
+        "id": "oMpSBiHqTGWKtIwEaUDT8Q"
       },
       "description": {
-        "type": "textarea"
+        "type": "textarea",
+        "id": "k7iHWsDRRs6_49g6sxterg"
       },
       "image": {
         "type": "asset",
         "filetypes": [
           "images"
-        ]
+        ],
+        "id": "lMqrREd8RJKyRiO0p_DOXA"
+      },
+      "tab-03eb905a-afc3-438a-b4d6-1f4cd2dc0661": {
+        "display_name": "AEO",
+        "keys": [
+          "markdown"
+        ],
+        "pos": 0,
+        "type": "tab",
+        "id": "A-uQWq_DQ4q01h9M0twGYQ"
+      },
+      "markdown": {
+        "type": "boolean",
+        "pos": 6,
+        "id": "H0Zbt9LdShil3YNk2Txm3w"
       }
     },
     "image": null,
@@ -1542,14 +1606,34 @@
     "display_name": null,
     "description": null,
     "created_at": "2022-02-11T13:11:26.403Z",
-    "updated_at": "2022-11-07T09:48:54.404Z",
+    "updated_at": "2025-10-08T09:34:57.988Z",
     "id": 2182373,
     "schema": {
       "title": {
         "type": "text",
         "required": true,
         "max_length": "500",
-        "pos": 0
+        "pos": 0,
+        "id": "-rdTD2HKRcimADOtxPQoqQ"
+      },
+      "author": {
+        "type": "option",
+        "use_uuid": true,
+        "source": "internal_stories",
+        "folder_slug": "blog/authors",
+        "filter_content_type": [
+          "Author"
+        ],
+        "id": "mIIaEzWIQVCSn_seFCqTgw"
+      },
+      "tab-b0199eef-2535-4c52-a859-c085c07a421c": {
+        "display_name": "AEO",
+        "keys": [
+          "markdown"
+        ],
+        "pos": 0,
+        "type": "tab",
+        "id": "sBme7yU1TFKoWcCFwHpCHA"
       },
       "image": {
         "type": "asset",
@@ -1560,11 +1644,13 @@
         "pos": 1,
         "filetypes": [
           "images"
-        ]
+        ],
+        "id": "L01kWYwwRminhlLLWH7wwg"
       },
       "intro": {
         "type": "textarea",
-        "pos": 2
+        "pos": 2,
+        "id": "UlIoR2baQtCBHpW7aKvb1w"
       },
       "body": {
         "type": "bloks",
@@ -1573,7 +1659,8 @@
           "HelloWorld",
           "RichTextContent"
         ],
-        "pos": 3
+        "pos": 3,
+        "id": "catBn7ITRHivxiV-kQTceg"
       },
       "type": {
         "type": "option",
@@ -1592,7 +1679,8 @@
             "value": "case-study",
             "name": "case-study"
           }
-        ]
+        ],
+        "id": "9GWZhpB_Sdug8Wrr9hjxVQ"
       },
       "categories": {
         "type": "options",
@@ -1601,16 +1689,13 @@
         "filter_content_type": [
           "Category"
         ],
-        "pos": 5
+        "pos": 5,
+        "id": "30CTgBwZROCAi73Z_Vhc6Q"
       },
-      "author": {
-        "type": "option",
-        "use_uuid": true,
-        "source": "internal_stories",
-        "folder_slug": "blog/authors",
-        "filter_content_type": [
-          "Author"
-        ]
+      "markdown": {
+        "type": "boolean",
+        "pos": 8,
+        "id": "sKeo43O8TUexdNg3GEHafg"
       }
     },
     "image": null,

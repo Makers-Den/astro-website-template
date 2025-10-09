@@ -50,13 +50,15 @@ export default defineConfig({
       CLOUDFLARE_API_KEY: envField.string({ context: 'server', access: 'secret' }),
       PUBLIC_GTM_ID: envField.string({ context: 'server', access: 'public' }),
       PUBLIC_SITE_URL: envField.string({ context: 'server', access: 'public' }),
+      OPENAI_API_KEY: envField.string({ context: 'server', access: 'secret' }),
+      STORYBLOK_LLM_CONTEXTS_FOLDER_ID: envField.string({ context: 'server', access: 'public' }),
     },
     validateSecrets: true,
   },
   site: env.PUBLIC_SITE_URL,
   i18n: {
     defaultLocale: 'en',
-    locales: ['en', 'de', 'he'],
+    locales: ['en', 'de'],
   },
   experimental: {
     fonts: [

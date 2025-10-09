@@ -1,0 +1,53 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Container from '~/components/ui/Container.astro';
+import ButtonLink from '~/components/ui/ButtonLink.astro';
+import SvgIcon from '~/components/ui/SvgIcon.astro';
+import { getGlobalSettingsStory } from '~/utils/storyblokRepository';
+import { getStoryblokVersion } from '~/utils/storyblokRepository/helpers';
+import Typography from '~/components/ui/typography/Typography.astro';
+
+const storyblokVersion = getStoryblokVersion(Astro.cookies);
+
+let globalSettingsStory: Awaited<ReturnType<typeof getGlobalSettingsStory>> = null;
+
+let error: Error | null = null;
+
+try {
+  globalSettingsStory = await getGlobalSettingsStory({
+    version: storyblokVersion,
+  });
+} catch (e) {
+  error = e as Error;
+  console.error('Error fetching content:', e);
+}
+
+if (!globalSettingsStory) {
+  console.warn('Failed to fetch global settings, using fallback data:', error);
+  globalSettingsStory = null;
+}
+---
+
+<Layout globalSettingsStory={globalSettingsStory}>
+  <main class="py-16 lg:py-36">
+    <Container class="flex flex-col items-center justify-between">
+      <div class="relative flex aspect-[2.05] w-full max-w-5xl items-center justify-center">
+        <Typography as="h1" variant="hugeHeading" class="text-brand-green mt-[5%] text-[min(28cqw,290px)]"
+          >404</Typography
+        >
+      </div>
+
+      <Typography class="mt-7 text-left text-gray-400">
+        The page you tried to visit doesn’t exist.
+        <br /> Maybe you mistyped the url?
+      </Typography>
+
+      <ButtonLink class="mt-10" href="/">
+        Go to Homepage
+        <div class="bg-grey-900 flex h-fit w-fit items-center justify-center rounded-md p-[2px]">
+          <SvgIcon name="ArrowRight" class="fill-brand-green h-4 w-4" />
+        </div>
+      </ButtonLink>
+    </Container>
+  </main>
+</Layout>

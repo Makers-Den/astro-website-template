@@ -60,6 +60,7 @@
     "js-cookie": "^3.0.5",
     "limax": "4.1.0",
     "lodash.merge": "^4.6.2",
+    "openai": "^6.2.0",
     "postmark": "^4.0.5",
     "prismjs": "^1.30.0",
     "react": "^19.2.0",

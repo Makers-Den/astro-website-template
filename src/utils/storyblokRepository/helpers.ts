@@ -13,7 +13,7 @@ export const RESOLVED_RELATIONS_ARRAY = [
 ];
 export const SITEMAP_EXCLUDED_SLUGS = ['home', 'not-found', 'dev-page', 'thank-you'];
 export const ALL_PAGE_TYPES = ['Page', 'Post'];
-export const AVAILABLE_LANGUAGES = ['en', 'de', 'he'];
+export const AVAILABLE_LANGUAGES = ['en', 'de'];
 
 export const sbLinkToHref = (sbLink: StoryblokMultilink | undefined): string => {
   if (!sbLink) return '';

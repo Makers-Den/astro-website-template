@@ -41,7 +41,8 @@ export const GET: APIRoute = async ({ url, locals }) => {
   }
 
   const tree = toSatori(html);
-  return new ImageResponse(tree, {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return new ImageResponse(tree as any, {
     width: 1200,
     height: 630,
     fonts: fontData
