@@ -111,11 +111,22 @@ export default defineConfig({
           ['gtm.push', { preserveBehavior: true }],
         ],
         loadScriptsOnMainThread: ['https://cdn-cookieyes.com', 'https://script.cookieyes.com', /cookieyes/i],
-        resolveUrl: (url, location) => {
-          if (url.origin === location.origin || url.hostname.includes('cookieyes')) return url;
-          const proxyUrl = new URL('/api/partytown-proxy', location.origin);
-          proxyUrl.searchParams.append('url', url.href);
-          return proxyUrl;
+        resolveUrl(url) {
+          if (url.toString().includes('reverse-proxy.makersden.workers.dev')) return url;
+          if (
+            url.hostname.includes('google-analytics') ||
+            url.hostname.includes('www.googletagmanager.com') ||
+            url.hostname.includes('connect.facebook.net') ||
+            url.href.includes('googleads.g.doubleclick.net') ||
+            url.href.includes('gpt_ads-public') ||
+            url.href.includes('service_worker')
+          ) {
+            const proxyUrl = new URL('https://reverse-proxy.makersden.workers.dev');
+            proxyUrl.searchParams.append('url', url.toString());
+            return proxyUrl;
+          }
+
+          return url;
         },
       },
     }),
