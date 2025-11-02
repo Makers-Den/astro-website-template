@@ -15,7 +15,7 @@ export interface Filter {
   [key: string]: unknown;
 }
 
-const buildFilterQuery = (query: Filter | Filter[] | undefined) => {
+export const buildFilterQuery = (query: Filter | Filter[] | undefined) => {
   if (!query) {
     return {};
   }

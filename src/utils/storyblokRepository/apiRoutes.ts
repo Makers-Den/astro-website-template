@@ -1,6 +1,9 @@
 import type { StoryblokStory } from '~/types/storyblok';
 import { ALL_PAGE_TYPES, SITEMAP_EXCLUDED_SLUGS } from './helpers';
 import { storyblokApi as storyblokApiInstanceAPIRoute } from '@storyblok/astro/client';
+import type { ISbStoriesParams } from '@storyblok/astro';
+import { buildFilterQuery } from '.';
+import type { StoryblokStoriesResponse } from '~/types/storyblok.custom';
 
 export const findAllPageSlugs = async () => {
   const storyblokApi = storyblokApiInstanceAPIRoute;
@@ -44,3 +47,21 @@ export const findAllPageSlugs = async () => {
     return { allSlugsWithLocale: [], allSlugsWithoutLocale: [] };
   }
 };
+
+export async function getStoryblokStories<T = Record<string, unknown>>(options: ISbStoriesParams) {
+  const storyblokApi = storyblokApiInstanceAPIRoute;
+
+  if (!storyblokApi) {
+    throw new Error('Storyblok API not initialized');
+  }
+
+  const { filter_query, ...rest } = options;
+
+  const response = await storyblokApi.get('cdn/stories', {
+    ...rest,
+    ...buildFilterQuery(filter_query),
+    version: options?.version || (import.meta.env.DEV ? 'draft' : 'published'),
+  }) as StoryblokStoriesResponse<T>;
+
+  return response.data.stories;
+}
