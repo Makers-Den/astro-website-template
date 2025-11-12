@@ -18,6 +18,7 @@ let hrefLocalized = href;
 if (href.startsWith('/') && currentLocale && hrefLocalized.split('/')[1] !== currentLocale) {
   hrefLocalized = getRelativeLocaleUrl(currentLocale, href).replace(/\/$/, '');
 }
+if (!hrefLocalized) hrefLocalized = '/'
 
 const linkProps = isNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 ---

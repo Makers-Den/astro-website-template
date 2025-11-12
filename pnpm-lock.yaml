@@ -89,6 +89,9 @@ importers:
       lodash.merge:
         specifier: ^4.6.2
         version: 4.6.2
+      openai:
+        specifier: ^6.2.0
+        version: 6.2.0(ws@8.18.0)(zod@3.25.67)
       postmark:
         specifier: ^4.0.5
         version: 4.0.5
@@ -3739,6 +3742,18 @@ packages:
 
   oniguruma-to-es@4.3.3:
     resolution: {integrity: sha512-rPiZhzC3wXwE59YQMRDodUwwT9FZ9nNBwQQfsd1wfdtlKEyCdRV0avrTcSZ5xlIvGRVPd/cx6ZN45ECmS39xvg==}
+
+  openai@6.2.0:
+    resolution: {integrity: sha512-qqjzHls7F5xkXNGy9P1Ei1rorI5LWupUUFWP66zPU8FlZbiITX8SFcHMKNZg/NATJ0LpIZcMUFxSwQmdeQPwSw==}
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.25 || ^4.0
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -9338,6 +9353,11 @@ snapshots:
       oniguruma-parser: 0.12.1
       regex: 6.0.1
       regex-recursion: 6.0.2
+
+  openai@6.2.0(ws@8.18.0)(zod@3.25.67):
+    optionalDependencies:
+      ws: 8.18.0
+      zod: 3.25.67
 
   optionator@0.9.4:
     dependencies:
