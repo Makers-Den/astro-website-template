@@ -15,18 +15,89 @@ const { logo: logos, spacingBottom = 'md', spacingTop = 'md' } = blok;
 <div class="bg-white" {...makeEditable(blok)}>
   <VSpacer size={spacingTop} />
 
-  <Container>
-    <div class="flex flex-wrap items-center justify-center gap-8">
+  <div class="relative w-full overflow-hidden">
+    <div
+      class="logo-carousel-mask pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white to-transparent"
+    >
+    </div>
+    <div
+      class="logo-carousel-mask pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white to-transparent"
+    >
+    </div>
+
+    <div class="logo-carousel-track flex w-max items-center gap-12 py-4" data-logo-carousel>
       {
-        logos
-          ? logos.map((logo) => (
-              <div class="flex items-center justify-center shrink-0">
-                <StoryblokImage class="h-12 w-auto object-contain" src={logo.filename} alt={logo.alt} />
+        logos && logos.length > 0 ? (
+          <>
+            {logos.map((logo) => (
+              <div class="logo-item flex shrink-0 items-center justify-center px-4">
+                <StoryblokImage
+                  class="h-12 w-auto object-contain grayscale transition-all duration-300 hover:grayscale-0"
+                  src={logo.filename}
+                  alt={logo.alt}
+                />
               </div>
-            ))
-          : 'Please add logos'
+            ))}
+            {logos.map((logo) => (
+              <div class="logo-item flex shrink-0 items-center justify-center px-4">
+                <StoryblokImage
+                  class="h-12 w-auto object-contain grayscale transition-all duration-300 hover:grayscale-0"
+                  src={logo.filename}
+                  alt={logo.alt}
+                />
+              </div>
+            ))}
+          </>
+        ) : (
+          <Container>
+            <p>Please add logos</p>
+          </Container>
+        )
       }
     </div>
-  </Container>
+  </div>
+
   <VSpacer size={spacingBottom} />
 </div>
+
+<script>
+  import { animate } from 'motion';
+
+  type AnimationControls = { pause: () => void; play: () => void };
+
+  function initLogoCarousel() {
+    const carousels = document.querySelectorAll<HTMLElement>('[data-logo-carousel]');
+
+    carousels.forEach((track) => {
+      if (track.dataset.carouselInit === 'true') return;
+
+      const container = track.parentElement;
+      if (!container) return;
+
+      const containerWidth = container.offsetWidth;
+      const trackWidth = track.scrollWidth;
+      const overflowDistance = trackWidth - containerWidth;
+
+      if (overflowDistance <= 0) return;
+
+      const controls = (animate as (el: HTMLElement, keyframes: object, options: object) => AnimationControls)(
+        track,
+        { x: [0, -overflowDistance] },
+        {
+          duration: 15,
+          ease: 'easeInOut',
+          repeat: Infinity,
+          repeatType: 'mirror',
+        }
+      );
+
+      track.addEventListener('mouseenter', () => controls.pause());
+      track.addEventListener('mouseleave', () => controls.play());
+
+      track.dataset.carouselInit = 'true';
+    });
+  }
+
+  initLogoCarousel();
+  document.addEventListener('astro:page-load', initLogoCarousel);
+</script>

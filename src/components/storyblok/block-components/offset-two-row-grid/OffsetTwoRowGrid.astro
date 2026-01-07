@@ -52,9 +52,55 @@ const { header, cards } = blok;
       <div class="">
         <Typography as="h2" variant="mediumHeading" class="text-primary-900">{header}</Typography>
       </div>
-      <div class="col-span-2 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 md:gap-x-6 lg:gap-x-8 lg:gap-y-20">
-        {cards?.map((card) => <TwoGridColumnCard blok={card} />)}
+      <div
+        class="col-span-2 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 md:gap-x-6 lg:gap-x-8 lg:gap-y-20"
+        data-cards-grid
+      >
+        {
+          cards?.map((card, index) => (
+            <div class="animated-card" data-card-index={index}>
+              <TwoGridColumnCard blok={card} />
+            </div>
+          ))
+        }
       </div>
     </div>
   </Container>
 </div>
+
+<script>
+  import { animate, stagger, inView } from 'motion';
+
+  function initCardAnimations() {
+    const grids = document.querySelectorAll('[data-cards-grid]');
+
+    grids.forEach((grid) => {
+      const cards = grid.querySelectorAll<HTMLElement>('.animated-card');
+      if (cards.length === 0) return;
+
+      cards.forEach((card) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(32px)';
+      });
+
+      inView(
+        grid,
+        () => {
+          (animate as (selector: string, keyframes: object, options: object) => void)(
+            '.animated-card',
+            { opacity: 1, y: 0 },
+            {
+              duration: 0.6,
+              delay: stagger(0.12),
+              easing: [0.22, 1, 0.36, 1],
+            }
+          );
+        },
+        { amount: 0.2 }
+      );
+    });
+  }
+
+  initCardAnimations();
+  document.addEventListener('astro:page-load', initCardAnimations);
+</script>

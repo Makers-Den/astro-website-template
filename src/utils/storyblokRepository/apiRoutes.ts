@@ -57,11 +57,11 @@ export async function getStoryblokStories<T = Record<string, unknown>>(options: 
 
   const { filter_query, ...rest } = options;
 
-  const response = await storyblokApi.get('cdn/stories', {
+  const response = (await storyblokApi.get('cdn/stories', {
     ...rest,
     ...buildFilterQuery(filter_query),
     version: options?.version || (import.meta.env.DEV ? 'draft' : 'published'),
-  }) as StoryblokStoriesResponse<T>;
+  })) as StoryblokStoriesResponse<T>;
 
   return response.data.stories;
 }
@@ -73,10 +73,10 @@ export async function getStoryblokStory<T = Record<string, unknown>>(slug: strin
     throw new Error('Storyblok API not initialized');
   }
 
-  const response = await storyblokApi.get(`cdn/stories/${slug}`, {
+  const response = (await storyblokApi.get(`cdn/stories/${slug}`, {
     ...params,
     version: params?.version || (import.meta.env.DEV ? 'draft' : 'published'),
-  }) as StoryblokStoryResponse<T>;
+  })) as StoryblokStoryResponse<T>;
 
   return response.data.story;
 }

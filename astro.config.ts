@@ -15,6 +15,8 @@ import mkcert from 'vite-plugin-mkcert';
 
 import { loadEnv } from 'vite';
 
+import vtbot from 'astro-vtbot';
+
 const env = loadEnv('', process.cwd(), '');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -103,7 +105,6 @@ export default defineConfig({
       enableFallbackComponent: true,
       customFallbackComponent: 'storyblok/block-components/CustomFallbackComponent',
     }),
-
     icon(),
     partytown({
       config: {
@@ -148,6 +149,7 @@ export default defineConfig({
       SVG: true,
       Logger: 1,
     }),
+    vtbot(),
   ],
 
   image: {
@@ -159,7 +161,7 @@ export default defineConfig({
       alias: {
         '~': path.resolve(__dirname, './src'),
         '@/fonts': path.resolve(__dirname, './src/assets/fonts'),
-        ...((process.env.NODE_ENV === 'production') ? { 'react-dom/server': 'react-dom/server.edge' } : {}),
+        ...(process.env.NODE_ENV === 'production' ? { 'react-dom/server': 'react-dom/server.edge' } : {}),
       },
     },
     ssr: {

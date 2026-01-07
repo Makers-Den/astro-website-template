@@ -24,11 +24,11 @@ export const GET: APIRoute = async ({ url }) => {
       }));
       return {
         default: {
-        url: `${CANONICAL_BASE_URL_NO_SLASH}/${slug}`,
-        lastModified: new Date().toISOString(),
-      },
-      alternates,
-    };
+          url: `${CANONICAL_BASE_URL_NO_SLASH}/${slug}`,
+          lastModified: new Date().toISOString(),
+        },
+        alternates,
+      };
     });
 
     // Add home page index manually

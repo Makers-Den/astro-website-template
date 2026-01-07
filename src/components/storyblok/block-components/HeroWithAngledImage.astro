@@ -13,7 +13,7 @@ const { blok } = Astro.props;
 const { topHeader, bottomHeader, description, links, image } = blok;
 ---
 
-<div class="relative bg-white" {...makeEditable(blok)}>
+<div class="relative bg-white" {...makeEditable(blok)} data-hero-animated>
   <Container class="relative lg:px-0">
     <div class="relative z-10 bg-white pb-8 sm:pb-16 md:pb-20 lg:w-1/2 lg:max-w-2xl lg:pb-28 xl:pb-32">
       <svg
@@ -28,18 +28,18 @@ const { topHeader, bottomHeader, description, links, image } = blok;
       <main class="mx-auto max-w-7xl px-4 pt-10 sm:px-6 sm:pt-12 md:pt-16 lg:px-8 lg:pt-20 xl:pt-28">
         <div class="sm:text-center lg:text-left">
           <Typography as="h1" variant="h1" class="text-primary-900">
-            <span class="block">{topHeader}</span>
-            <span class="block">{bottomHeader}</span>
+            <span class="hero-text-line block">{topHeader}</span>
+            <span class="hero-text-line block">{bottomHeader}</span>
           </Typography>
           <Typography
             as="p"
             variant="introLarge"
-            class="z-110 mt-3 text-base text-primary-700 sm:mx-auto sm:mt-5 sm:max-w-xl sm:text-lg md:mt-5 lg:mx-0 lg:pr-6"
+            class="hero-text-line z-110 mt-3 text-base text-primary-700 sm:mx-auto sm:mt-5 sm:max-w-xl sm:text-lg md:mt-5 lg:mx-0 lg:pr-6"
           >
             {description}
           </Typography>
 
-          <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
+          <div class="hero-buttons mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
             <div class="rounded-md">
               {
                 links?.[0] && (
@@ -68,8 +68,84 @@ const { topHeader, bottomHeader, description, links, image } = blok;
         </div>
       </main>
     </div>
-    <div class="relative h-56 sm:h-72 md:h-96 lg:absolute lg:inset-y-0 lg:right-0 lg:h-[100%] lg:w-1/2">
+    <div class="hero-image relative h-56 sm:h-72 md:h-96 lg:absolute lg:inset-y-0 lg:right-0 lg:h-[100%] lg:w-1/2">
       <StoryblokImage class="rounded-md object-cover" src={image?.filename} alt={image?.alt} />
     </div>
   </Container>
 </div>
+
+<script>
+  import { animate, stagger, inView } from 'motion';
+
+  function initHeroAnimation() {
+    const heroes = document.querySelectorAll<HTMLElement>('[data-hero-animated]');
+
+    heroes.forEach((hero) => {
+      if (hero.dataset.heroInit === 'true') return;
+
+      const textLines = hero.querySelectorAll<HTMLElement>('.hero-text-line');
+      const buttons = hero.querySelector<HTMLElement>('.hero-buttons');
+      const image = hero.querySelector<HTMLElement>('.hero-image');
+
+      textLines.forEach((line) => {
+        line.style.opacity = '0';
+        line.style.transform = 'translateY(24px)';
+      });
+
+      if (buttons) {
+        buttons.style.opacity = '0';
+        buttons.style.transform = 'translateY(16px)';
+      }
+
+      if (image) {
+        image.style.opacity = '0';
+        image.style.transform = 'translateX(60px) scale(1.05)';
+      }
+
+      inView(
+        hero,
+        () => {
+          (animate as (el: HTMLElement | HTMLElement[], keyframes: object, options: object) => void)(
+            Array.from(textLines),
+            { opacity: 1, y: 0 },
+            {
+              duration: 0.7,
+              delay: stagger(0.15),
+              easing: [0.22, 1, 0.36, 1],
+            }
+          );
+
+          if (buttons) {
+            (animate as (el: HTMLElement, keyframes: object, options: object) => void)(
+              buttons,
+              { opacity: 1, y: 0 },
+              {
+                duration: 0.6,
+                delay: 0.5,
+                easing: [0.22, 1, 0.36, 1],
+              }
+            );
+          }
+
+          if (image) {
+            (animate as (el: HTMLElement, keyframes: object, options: object) => void)(
+              image,
+              { opacity: 1, x: 0, scale: 1 },
+              {
+                duration: 0.9,
+                delay: 0.2,
+                easing: [0.22, 1, 0.36, 1],
+              }
+            );
+          }
+        },
+        { amount: 0.3 }
+      );
+
+      hero.dataset.heroInit = 'true';
+    });
+  }
+
+  initHeroAnimation();
+  document.addEventListener('astro:page-load', initHeroAnimation);
+</script>

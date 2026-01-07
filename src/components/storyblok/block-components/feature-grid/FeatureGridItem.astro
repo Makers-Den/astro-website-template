@@ -5,16 +5,17 @@ import type { FeatureGridItemStoryblok } from '~/types/storyblok';
 import type { BlokProps } from '~/types/storyblok.custom';
 import { makeEditable } from '~/utils/storyblokRepository/helpers';
 
+
 type Props = BlokProps<FeatureGridItemStoryblok>;
 const { blok } = Astro.props;
 const { title, icon, description } = blok;
 ---
 
-<div class="pt-6" {...makeEditable(blok)}>
+<div class="pt-6" {...makeEditable(blok)} data-feature-item>
   <div class="flow-root rounded-lg bg-gray-50 px-6 pb-8">
     <div class="-mt-6">
       <div>
-        <span class="inline-flex items-center justify-center rounded-md bg-primary-800 p-3 shadow-lg">
+        <span class="feature-icon inline-flex items-center justify-center rounded-md bg-primary-800 p-3 shadow-lg">
           <SvgIcon name={icon || 'Cog'} class="text-white h-6 w-6" />
         </span>
       </div>
@@ -25,3 +26,40 @@ const { title, icon, description } = blok;
     </div>
   </div>
 </div>
+
+<script>
+  import { animate } from 'motion';
+
+  type AnimationControls = { stop: () => void };
+
+  function initFeatureIconAnimation() {
+    const items = document.querySelectorAll<HTMLElement>('[data-feature-item]');
+
+    items.forEach((item) => {
+      if (item.dataset.featureInit === 'true') return;
+
+      const iconWrapper = item.querySelector<HTMLElement>('.feature-icon');
+      if (!iconWrapper) return;
+
+      let currentAnimation: AnimationControls | null = null;
+
+      item.addEventListener('mouseenter', () => {
+        if (currentAnimation) currentAnimation.stop();
+
+        currentAnimation = (animate as (el: HTMLElement, keyframes: object, options: object) => AnimationControls)(
+          iconWrapper,
+          { rotate: [0, 360] },
+          {
+            duration: 0.6,
+            easing: [0.22, 1, 0.36, 1],
+          }
+        );
+      });
+
+      item.dataset.featureInit = 'true';
+    });
+  }
+
+  initFeatureIconAnimation();
+  document.addEventListener('astro:page-load', initFeatureIconAnimation);
+</script>
