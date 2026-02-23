@@ -1,9 +1,14 @@
 {
   "name": "astro-website-template",
   "version": "1.0.0-beta.52",
-  "description": "Astro Website Template",
+  "description": "Production-ready Astro + Storyblok website template by Makers' Den",
   "type": "module",
-  "private": true,
+  "license": "MIT",
+  "homepage": "https://makersden.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Makers-Den/astro-website-template.git"
+  },
   "engines": {
     "node": ">=22.0.0"
   },
